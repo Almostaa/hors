@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sesame.mapper.UserMapper">
+
+    <!-- 封装结果集 -->
+	<resultMap id="UserResultMap" type="com.sesame.pojo.User" >
+	    <id column="userNo" property="userNo" jdbcType="INTEGER" />
+	    <result column="userName" property="userName" jdbcType="VARCHAR" />
+	    <result column="passWord" property="passWord" jdbcType="VARCHAR" />
+	    <result column="sex" property="sex" jdbcType="VARCHAR" />
+	    <result column="idCardNumber" property="idCardNumber" jdbcType="VARCHAR" />
+	    <result column="socialCard" property="socialCard" jdbcType="VARCHAR" />
+	    <result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR" />
+	 </resultMap>
+	 
+	 <!-- sql通用 -->
+	 <sql id="User_List">
+	 	userNo ,userName , passWord ,sex ,idCardNumber ,socialCard ,phoneNumber
+	 </sql>
+	 
+	 <!-- 
+		 /*
+		 * 注册用户
+		 */
+			public Integer register(User user);
+	  -->
+	  <insert id="register" parameterType="com.sesame.pojo.User">	  
+	  		insert into user(phoneNumber,passWord)
+	  		value (#{phoneNumber,jdbcType=VARCHAR},#{passWord,jdbcType=VARCHAR})
+	  </insert>
+	  
+	  <!-- 
+		  	/**count(*)=1，数据库有信息，=0用户或密码错误*/
+			public User loginUser(User user);
+	   -->
+	   <select id="loginUser" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
+	   
+	   		select count(*),<include refid="User_List"></include>
+	   		from user
+	   		<where>
+	   			<if test="phoneNumber!=null">
+	   				phoneNumber = #{phoneNumber}
+	   			</if>
+	   			
+	   			<if test="passWord !=null">
+	   				and passWord = #{passWord}
+	   			</if>
+	   		</where>
+	   </select>
+
+
+</mapper>
