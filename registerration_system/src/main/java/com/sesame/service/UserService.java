@@ -16,5 +16,11 @@ public interface UserService {
    
    /**用户登录*/
 	public User login(User user);
+	
+	/**通过id查询用户信息用于回显*/
+	public User queryUserInfo( Integer id);
+	
+	/**完善用户信息*/
+	public Integer improveUserInfo(User user);
 
 }

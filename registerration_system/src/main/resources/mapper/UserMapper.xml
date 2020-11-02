@@ -48,6 +48,47 @@
 	   			</if>
 	   		</where>
 	   </select>
+	   
+	   
+	   <!--  
+	   		/**通过id查询用户信息用于回显*/
+			public User queryUserInfo( Integer userNo);
+	   -->
+	   
+	   <select id="queryUserInfo" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
+	   		select <include refid="User_List" ></include>
+	   		from user 
+	   		where userNo=#{userNo}
+	   </select>
+	   <!-- 
+	   		/**完善用户信息*/
+			public Integer improveUserInfo(User user);
+	   -->
+	   <update id="improveUserInfo" >	   
+	   		update user 
+	  		<set >
+		      <if test="userName != null" >
+		        userName = #{userName,jdbcType=VARCHAR},
+		      </if>
+		      <if test="passWord != null" >
+		        passWord = #{passWord,jdbcType=VARCHAR},
+		      </if>
+		      <if test="sex != null" >
+		        sex = #{sex,jdbcType=VARCHAR},
+		      </if>
+		      <if test="idCardNumber != null" >
+		        idCardNumber = #{idCardNumber,jdbcType=VARCHAR},
+		      </if>
+		      <if test="socialCard != null" >
+		        socialCard = #{socialCard,jdbcType=VARCHAR},
+		      </if>
+		      <if test="phoneNumber != null" >
+		        phoneNumber = #{phoneNumber,jdbcType=VARCHAR},
+		      </if>
+		    </set>
+		    where userNo = #{userNo,jdbcType=INTEGER}	  		
+	  </update>
+
 
 
 </mapper>

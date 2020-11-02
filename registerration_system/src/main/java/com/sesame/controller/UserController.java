@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sesame.mapper.UserMapper;
 import com.sesame.pojo.User;
 import com.sesame.service.UserService;
 import com.sesame.utils.JwtTokenUtils;
@@ -116,14 +117,97 @@ public class UserController {
 					//用户或者验证码错误
 					responseData = ResponseData.customerError(str);
 				}					
-		}else {
+		}else {			
 			
-//			String str="username or password is wrong";
-//			//用户或者密码错误
-//			responseData.customerError(str);
 		}
 		return  responseData;		
 	}
+	
+	
+	/**通过传入的id查询用户信息*/
+	@RequestMapping(value = "/queryUserInfo",method = RequestMethod.POST)
+	public User queryUserInfo(@RequestParam("userNo") Integer userNo) {
+		
+		
+		return userService.queryUserInfo(userNo);
+		
+	}
+	
+	/**
+	 * 完善用户信息（修改）和修改密码
+	 * @param user
+	 * @param code 验证码
+	 * @param newPossWd 新密码
+	 * @param comfirmPassWd 确认密码
+	 * @return
+	 */
+	@RequestMapping(value = "/improveInfoOrModifyPW",method = RequestMethod.POST)
+	public RespBean improveInfoOrModifyPassWord(@RequestBody User user ,@RequestParam(required = false) String code ,@RequestParam(required = false) String newPossWd, @RequestParam(required = false) String comfirmPassWd) {
+		
+		User users = userService.login(user);
+		int count=0;
+		
+		//通过判断是否有验证码来判断是修改密码还是完善信息
+		if(code!=null) {		
+			String vCode=null;
+			try {
+				 vCode = session.getAttribute("codes").toString();				
+			} catch (Exception e) {}
+			if(users!=null) {
+				
+				if(code.equals(vCode)&&(newPossWd==comfirmPassWd)) {					
+					//修改密码
+					count=userService.improveUserInfo(users);				
+				}else {					
+					return new RespBean("error", "验证码或两次密码输入结果不一致");
+				}				
+			}else {
+				return new RespBean("error", "手机号不存在!");
+			}			
+		}else {
+			//完善用户信息
+			count= userService.improveUserInfo(user);
+		}
+	
+		if(count>0) {
+			
+			return new RespBean("success", "操作成功！!");
+		}else {
+			return new RespBean("success", "操作失败！!");
+		}
+	}
+	
+	/**忘记密码-->*/
+	
+	public RespBean modifyPassWord(User user,String code ,String newPossWd,String comfirmPassWd) {
+		
+		String vCode=null;
+		try {
+			 vCode = session.getAttribute("codes").toString();
+			
+		} catch (Exception e) {
+			
+		}
+		User users = userService.login(user);
+		if(users!=null) {
+			
+			if(code.equals(vCode)&&(newPossWd==comfirmPassWd)) {
+				
+				//修改密码
+				userService.improveUserInfo(users);
+				
+				
+			}else {
+				
+				return new RespBean("error", "验证码或两次密码输入结果不一致");
+			}
+			
+		}else {
+			return new RespBean("error", "手机号不存在!");
+		}
+		return null;
+	}
+	
 	
 
 }
