@@ -22,7 +22,7 @@
 		        </div>
 		        <a class="link" @click="problem()">专家问诊</a>
 		        <a class="link" @click="news()">健康资讯</a>
-		        <a class="link" @click="people()">个人中心</a>
+		        <a class="link" @click="user()">个人中心</a>
 		    </div>
 		</div>						
 		<div style="margin-left: 183px;margin-top:0px;">
@@ -179,7 +179,7 @@
 		  		  this.$router.push('/news')
 		  },
 		  user(){
-			  this.$router.push("/people")
+			  this.$router.push("/user")
 		  },
 		  forget(){
 		  	this.$router.push('/forget')
