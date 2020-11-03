@@ -22,46 +22,36 @@
 		        </div>
 		        <a class="link" @click="problem()">专家问诊</a>
 		        <a class="link" @click="news()">健康资讯</a>
-		        <a class="link" @click="user()">个人中心</a>
+		        <a class="link" @click="people()">个人中心</a>
 		    </div>
-		</div>
-		
-		<!-- 用户头像 -->
-		<!-- <div class="card middle">
-		      <div class="top-section">
-		        <img src="../../assets/images/banner_1.jpg">
-		      </div>
-		      <div class="info-section">
-		        <h2>username</h2>
-		      </div>
-		</div> -->
-		
+		</div>						
 		<div style="margin-left: 183px;margin-top:0px;">
 			  <el-tabs type="border-card" :tab-position="tabPosition" style="height: 500px;">
 			    <el-tab-pane label="账号管理">
-					<div :data="people">
-						<li style="font-size: 20px;margin: 10px;">
-							姓名：{{people.username | name}}
-						</li>
-						<li style="font-size: 20px;margin: 10px;">
-							性别：{{people.sex}}
-						</li>
-						<li style="font-size: 20px;margin: 10px;">
-							手机号：{{people.phone | phone}}
-						</li>
-						<li style="font-size: 20px;margin: 10px;">
-							身份证号：{{people.idcard | idcard}}
-						</li>
-						<li style="font-size: 20px;margin: 10px;">
-							社保卡号：{{people.socialcard | idcard}}
-						</li><br />
-						<button type="button" style="margin: 30px;color: #0000FF;height: 30px;"
-							@click="forget()"
-						>修改密码</button>
-					
-						<button type="button" style="margin: 30px;color: #0000FF;height: 30px;"
-							@click="showEditDialog = true" >完善信息</button>
-					</div>
+			    	<el-col :span="8">
+			    		<el-form :label-position="labelPosition" :rules="rules" ref="people" label-width="80px" :model="people">
+			    			<div style="margin: 20px;"></div>
+			    			<el-form-item label="姓名">
+			    				<el-input v-model="people.username"></el-input>
+			    			</el-form-item>
+			    			<el-form-item label="性别">
+			    				<el-input v-model="people.sex"></el-input>
+			    			</el-form-item>
+			    			<el-form-item label="身份证号">
+			    				<el-input v-model="people.idcard"></el-input>
+			    			</el-form-item>
+			    			<el-form-item label="社保卡号">
+			    				<el-input v-model="people.socialcard"></el-input>
+			    			</el-form-item>
+			    			<el-form-item label="联系电话">
+			    				<el-input v-model="people.phone"></el-input>
+			    			</el-form-item>
+			    			<el-form-item>
+			    				<el-button type="primary" @click="submitForm('people')">确定</el-button>
+			    				<el-button @click="resetForm('people')">取消</el-button>
+			    			</el-form-item>
+			    		</el-form>
+			    	</el-col>			   
 				</el-tab-pane>
 			    <el-tab-pane label="我的预约">
 					<el-table
@@ -145,6 +135,7 @@
 	  data() {
 	    return {
 			tabPosition: 'left',
+			labelPosition: 'left',
 			people:{
 				id:1,
 				username:'冯大大',
@@ -162,6 +153,19 @@
 	    };
 	  },
 	  methods: {
+	  	submitForm(formName) {
+        	this.$refs[formName].validate((valid) => {
+          	if (valid) {
+            	alert('submit!');
+          	} else {
+            	console.log('error submit!!');
+            	return false;
+          	}
+        	});
+      	},
+        resetForm(formName) {
+          this.$refs[formName].resetFields();
+        },
 	    handleSelect(key, keyPath) {
 	      console.log(key, keyPath);
 	    },
@@ -175,7 +179,7 @@
 		  		  this.$router.push('/news')
 		  },
 		  user(){
-			  this.$router.push("/user")
+			  this.$router.push("/people")
 		  },
 		  forget(){
 		  	this.$router.push('/forget')
