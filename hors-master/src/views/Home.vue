@@ -80,7 +80,7 @@
 		        <div class="caption"><span class="text">快速预约</span></div>
 		        <div class="form">
 		            <div class="line">
-						<select v-model="rooms.roomno" placeholder="选择室">
+						<select v-model="rooms.roomno" placeholder="选择室" @change="changeFenqiRate(rooms.roomno)">
 						    <option
 						      v-for="item in rooms"
 						      :key="item.roomno"
@@ -90,12 +90,12 @@
 						  </select>
 					</div>
 		            <div class="line">
-						<select v-model="value" placeholder="选择医生">
+						<select v-model="options.dno" placeholder="选择医生">
 						    <option
 						      v-for="item in options"
-						      :key="item.value"
-						      :label="item.label"
-						      :value="item.value">
+						      :key="item.dno"
+						      :label="item.dname"
+						      :value="item.dno">
 						    </option>
 						  </select>
 					</div>
@@ -137,6 +137,7 @@
 	
 	import Edit from "./gorooms.vue";
 	import {sectionlist ,roomList ,roomListById} from "../api/section.js"
+	import {getDoctorList} from "../api/doctor.js"
 	export default {
 	  name: 'Home',
 	  data() {
@@ -150,6 +151,7 @@
 			roombyid:[],
 			options: [],
 			showEditDialog: false,
+			num:'',
 		};
 	  },
 	  created() {
@@ -162,25 +164,29 @@
 		/* 获取科室 */
 		roomList()
 			.then(r=>{
-				this.rooms=r
+				this.rooms=r;
 			})
 			.catch(()=>{})
-			
-		/* 根据大类编号查询科室 */
-		roomListById()
-		.then(n=>{
-			this.roombyid=n
-		})
-		.catch(()=>{})
+	
 	  },
 	  mounted() {
 		  //定时器
 	  	this.timer = setInterval(() => {this.gotoPage(this.nextIndex)}, 2000)
 	  },
 	  methods: {
-		  
 		
-		  
+		// 将科室编号传值
+		changeFenqiRate(id){
+			  console.log(id+'aaa')
+			  this.num=id
+			  /* 根据科室编号获取科室下的医生 */
+			  getDoctorList({id:this.num})
+			  .then(n=>{
+			  	this.options=n
+			  })
+			  .catch(()=>{})
+		  },
+		  /* 根据大类显示科室*/
 		 goroom(id){
 			 this.id = id;
 			 this.showEditDialog = true
