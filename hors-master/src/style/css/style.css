@@ -81,12 +81,12 @@ select,input{
 /* banner模块内的样式 */
 .banner-search{
     background-color: #fafafa;
-	position:absolute;
+	position:fixed;
 	right:175px;
 	top:25%;
 }
 .banner-help{
-	position:absolute;
+	position:fixed;
 	right:175px;
 	top:65%;
 }
