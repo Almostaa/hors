@@ -2,11 +2,11 @@
 	  <div class="poster">
 		<el-form class="register-container" label-position="left" ref="registerForm" :model="registerForm" :rules='rules'>
 		  <h3 class="register_title">患者注册平台</h3>
-		  <el-form-item  prop="phone">
-		      <el-input size="medium" v-model="registerForm.phone" placeholder="联系电话"></el-input>
+		  <el-form-item  prop="phonenumber">
+		      <el-input size="medium" v-model="registerForm.phonenumber" placeholder="联系电话"></el-input>
 		  </el-form-item>
-		  <el-form-item prop="smscode">
-		  		<el-input v-model="registerForm.smscode" 
+		  <el-form-item prop="code">
+		  		<el-input v-model="code" 
 				 style="width: 55%;"
 				 size="medium"
 				 placeholder="验证码"></el-input>
@@ -19,8 +19,8 @@
 		  <el-form-item >
 		      <el-button size="medium" type="primary" 
 			  style="width: 100%;border: none;color: #000000;"
-			   :disabled="!(registerForm.name && registerForm.password && registerForm.phone )"
-			   @click="submitForm('registerForm')">注册</el-button>
+			   :disabled="!(code && registerForm.password && registerForm.phonenumber )"
+			   @click="submitForm()">注册</el-button>
 			   <el-button type="text" class="register-tips" @click="handleLogin()">已有账号，去登录>></el-button>
 		  </el-form-item>
 			
@@ -31,6 +31,7 @@
  
 <script>
 	
+	import { smsStudent,registerform } from "../api/user.js"
     export default {
         name: "register",
         data() {
@@ -65,39 +66,35 @@
 			  }
 			};
             return {
-				vedioCanPlay: false,
-				fixStyle: '',
-				PATH_TO_MP4: '',
                 registerForm: {
-                    phone: '',
-					smscode:'',
-                    password: '',
+                    phonenumber: '',
+                    password: ''					
                 },
+				code:'',
+				formList:{},
 				rules:{
-					phone: [
+					phonenumber: [
 					    {validator: validatePhone, trigger: 'blur' }
 					],
 					password: [
 					    {validator: validatePass, trigger: 'blur' }
 					],
-					smscode: [{ validator: checkSmscode, trigger: 'blur' }],
+					code: [{ validator: checkSmscode, trigger: 'blur' }],
 				},
 				buttonText: '发送验证码',
 				isDisabled: false, // 是否禁止点击发送验证码按钮
+				flag: true,
             }
         },
 		
         methods: {
-			sendCode () {
-				yz({
-						phone:this.registerForm.phone,
+			//验证码
+			setsmCode () {
+				smsStudent({
+						phone:this.registerForm.phonenumber,
 					})
 				.then(r=>{
 					console.log(r)
-					this.$message({
-					  type: "success",
-					  message: r.msg
-					});
 					let time = 60
 					this.buttonText = '已发送'
 					this.isDisabled = true
@@ -118,36 +115,55 @@
 				.catch(()=>{});	
 			},
 			//提交注册
-			submitForm(formName) {
-			  this.$refs[formName].validate(valid => {
-			    if (valid) {
-					zc({
-						username:this.registerForm.name,
-						password:this.registerForm.password,
-						phone:this.registerForm.phone,
-						yzm:this.registerForm.smscode
+			submitForm() {
+				
+				const user={
+					phonenumber:this.registerForm.phonenumber,
+					password:this.registerForm.password,
+				}
+				const code=this.code
+				
+				 this.$axios({
+					method: 'post',
+					url: 'http://localhost:8088/user/register',
+					data: {user,code}
+				})
+				.then(data => {
+					console.log("code"+data)
+				}).catch(() => {});
+				 
+				
+				/* registerform({
+					user:this.registerForm,
+				})
+				.then(r => { 
+					console.log("sss"+r) */
+					/* const obj={
+						user:this.registerForm,
 					}
-					)
-					.then(r => {
-					  console.log(r);
-					  this.$message({
-					    type: "success",
-					    message: r.msg
-					  });
-					  if(r.msg === '注册成功'){
-					  	this.handleLogin()
-					  }
-					})
-					.catch(() => {});
-			      /* setTimeout(() => {
-			        alert('注册成功')
-			      }, 400); */
-			    } else {
-			      console.log("error submit!!");
-			      return false;
-			    }
-			  })
-			},
+					const code=this.code
+					this.$axios.post("http://localhost:8088/user/register",obj,code)
+					.then(data => {
+						console.log("code"+data)
+					}).catch(() => {}); */
+				/* }).catch(() => {}); */
+				
+				
+				/* this.formList = this.registerForm,
+				console.log( this.formList)
+				console.log( this.code)
+				console.log( this.formList,this.code)
+				registerform({
+					user:this.formList,
+					code:this.code
+				})
+				.then(r => {
+					console.log('呱呱呱呱呱呱呱呱呱'+r)
+				})
+				.catch(() => {}); */
+					      
+			},	
+
             handleLogin() {
                 this.$router.push('/login')
             },
