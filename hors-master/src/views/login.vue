@@ -3,23 +3,16 @@
 		<el-form class="login-container" label-position="left" label-width="0px" ref="loginForm" :model="loginForm" :rules='rules'>
 			<el-tabs v-model="activeName">
 				<el-tab-pane label="账号密码登录" name="first">
-					<el-form-item prop="username">
-								<el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="手机号">
-									
-								</el-input>
+					<el-form-item prop="phone">
+						<el-input type="text" v-model="loginForm.phone" auto-complete="off" placeholder="手机号"></el-input>
 					</el-form-item>
-						 
 					<el-form-item prop="password">
-								<el-input type="password" v-model="loginForm.password" auto-complete="off" placeholder="密码" show-password>
-									
-								</el-input>
+						<el-input type="password" v-model="loginForm.password" auto-complete="off" placeholder="密码" show-password></el-input>
 					</el-form-item>
 				</el-tab-pane>
 				<el-tab-pane label="验证码登录" name="second">
-					<el-form-item prop="username">
-						<el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="手机号">
-									
-						</el-input>
+					<el-form-item prop="phone">
+						<el-input type="text" v-model="loginForm.phone" auto-complete="off" placeholder="手机号">		</el-input>
 					</el-form-item>
 					<el-form-item prop="code">
 						<el-input v-model="loginForm.code" 
@@ -33,8 +26,7 @@
 			<el-form-item style="width: 100%">
 				<el-button type="primary"
 						style="width: 100%;border: none;color: #000000;"
-						:disabled="!(loginForm.username && loginForm.password)"
-						 @click="submitForm('loginForm')">登录
+						 @click="clicklogin()">登录
 				</el-button>
 				<el-button type="text" class="tips" @click="forget()">忘记密码</el-button>
 				<el-button type="text" class="login-tips" @click="handleRegister()">没有账号，去注册>></el-button>
@@ -44,6 +36,8 @@
 </template>
 
 <script>
+	
+	import { login , smsStudent } from "../api/user.js"
 	export default {
 	    data() {
 			var validatePhone = (rule, value, callback) => {
@@ -78,14 +72,16 @@
 	      return {
 	        activeName: 'first',
 			loginForm: {
-			    username: '',
+			    phone: '',
 			    password: '',
 				code:''
 			},
+			
 			buttonText: '发送验证码',
 			isDisabled: false, // 是否禁止点击发送验证码按钮
+			flag:true,
 			rules:{
-				username: [
+				phone: [
 				    {validator: validatePhone, trigger: 'blur' }
 				],
 				password: [
@@ -100,8 +96,8 @@
 	    methods: {
 			//发送验证码
 			setsmCode () {
-				yz({
-						email:this.ruleForm2.email,
+				smsStudent({
+						phone:this.loginForm.phone,
 					})
 				.then(r=>{
 					console.log(r)
@@ -128,6 +124,28 @@
 				})
 				.catch(()=>{});	
 			},
+			//点击登录
+			clicklogin() {
+			    login({
+			        phonenumber: this.loginForm.phone,
+			        password: this.loginForm.password,
+					code:this.loginForm.code,
+			    }).then(r => {
+			        console.log("aaaa"+r.status);
+					console.log("bbaa"+r.data);
+			        if (r.code === 200) {
+			            /* setUserInfo(r.data.user);
+			            setToken(r.data.token);*/
+			            this.$router.push("/"); 
+			        } else {
+			            this.$message({
+							message: "用户名或密码错误！",
+							type: "error"
+						});
+			        }
+			    })
+			    .catch(() => {});
+			},
 			forget(){
 				this.$router.push('/forget')
 			},
@@ -152,7 +170,6 @@
 		height: 100%;
 		overflow: hidden;
 		background-size:cover;
-		
 	}
 	.login-container {
 	  background:rgba(255, 255, 255, 0.2) none repeat scroll !important;

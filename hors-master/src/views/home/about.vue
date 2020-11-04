@@ -4,8 +4,8 @@
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
 		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
-		          <a @click="login()">登录</a>&nbsp;|
-		          <a @click="register()">注册</a>
+		          <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
+		          <a @click="register()" style="cursor:pointer">注册</a>
 		      </p>
 		  </div>
 		</div>

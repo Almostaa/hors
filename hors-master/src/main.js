@@ -5,10 +5,14 @@ import store from './store'
 import elementUi from "element-ui"
 import axios from 'axios' 
 import 'element-ui/lib/theme-chalk/index.css'
+import qs from 'qs'
 
+
+Vue.prototype.$qs = qs
 Vue.config.productionTip = false
 Vue.use(elementUi);
 Vue.prototype.$axios= axios ;
+Vue.prototype.$http = axios
 
 /**
  * 匹配电话号码

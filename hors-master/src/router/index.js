@@ -65,12 +65,26 @@ const routes = [
       return import('../views/forget.vue')
     }
   },
- 
+  {
+    path: '/fast',
+    name: 'fast',
+    component: function () {
+      return import('../views/page/fast.vue')
+    }
+  },
   {
     path: '/depdoctor',
     name: 'depdoctor',
     component: function () {
       return import('../views/page/depdoctor.vue')
+    }
+  },
+  
+  {
+    path: '/Goods',
+    name: 'Goods',
+    component: function () {
+      return import('../views/page/Goods.vue')
     }
   },
   

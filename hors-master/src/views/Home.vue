@@ -5,8 +5,8 @@
           <div class="wrap">
               <p class="call">888-888/888888电话预约</p>
               <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
-                  <a @click="login()">登录</a>&nbsp;|
-                  <a @click="register()">注册</a>
+                  <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
+                  <a @click="register()" style="cursor:pointer">注册</a>
               </p>
           </div>
 		</div>
@@ -28,11 +28,16 @@
 		<div id="nav" class="nav">
 		    <div class="wrap">
 		        <div class="link menu" @click="home()">全部科室
-		            <div class="menu-list ui-menu">
-		                <div class="ui-menu-item" v-for="o in offices">
-		                    <div class="ui-department clearfix" :id="o.id">
-								{{o.name}}
-								<div class="msg"><a @click="depdoctor(id)">心脑血管科室</a></div>
+		            <div class="menu-list ui-menu" style="overflow:scroll;">
+		                <div class="ui-menu-item" v-for="o in offices" >
+		                    <div class="ui-department clearfix" :id="o.sectionno" @click="goroom(o.sectionno)">
+								{{o.sectionname}}
+								<!-- <div class="msg" v-for="v in roombyid">
+									<a @click="depdoctor(id)">心脑血管科室</a>
+									<a @click="depdoctor(id)">心脑血管科室</a>
+									<a @click="depdoctor(id)">心脑血管科室</a>
+									<a @click="depdoctor(id)">心脑血管科室</a>
+								</div> -->
 							</div>
 							
 							
@@ -75,12 +80,12 @@
 		        <div class="caption"><span class="text">快速预约</span></div>
 		        <div class="form">
 		            <div class="line">
-						<select v-model="offices.id" placeholder="选择科室">
+						<select v-model="rooms.roomno" placeholder="选择室">
 						    <option
-						      v-for="item in offices"
-						      :key="item.id"
-						      :label="item.name"
-						      :value="item.id">
+						      v-for="item in rooms"
+						      :key="item.roomno"
+						      :label="item.roomname"
+						      :value="item.roomno">
 						    </option>
 						  </select>
 					</div>
@@ -118,10 +123,9 @@
 			<p style="font-size:12px;text-align:center;">
 				声明：所有信息和文章均来自互联网 如有异议 请与本站联系
 			</p>
-		</div> 
+		</div>
+			<Edit :showEditDialog="showEditDialog" @close="showEditDialog = false" />
 	</div>
-  
-     
 </template>
 
 <script>
@@ -129,6 +133,10 @@
 	import img2 from "../assets/home/2.png"
 	import img3 from "../assets/home/3.png"
 	import img4 from "../assets/home/4.png"
+	
+	
+	import Edit from "./gorooms.vue";
+	import {sectionlist ,roomList ,roomListById} from "../api/section.js"
 	export default {
 	  name: 'Home',
 	  data() {
@@ -137,40 +145,46 @@
 			currentIndex: 0,   //默认显示图片
 			timer: null ,   //定时器
 			value:'',
-			offices:[
-				{
-					id:1, name:'神经科'
-				},
-				{
-					id:2, name:'外科',
-				},
-				{
-					id:3, name:'内科',
-				},
-			],
-			options: [{
-			          value: '选项1',
-			          label: '黄金糕'
-			        }, {
-			          value: '选项2',
-			          label: '双皮奶'
-			        }, {
-			          value: '选项3',
-			          label: '蚵仔煎'
-			        }, {
-			          value: '选项4',
-			          label: '龙须面'
-			        }, {
-			          value: '选项5',
-			          label: '北京烤鸭'
-			        }],
+			offices:[],
+			rooms:[],
+			roombyid:[],
+			options: [],
+			showEditDialog: false,
 		};
+	  },
+	  created() {
+		  /* 获取大类*/
+	  	sectionlist()
+	  		.then(m =>{
+	  			this.offices = m
+	  		})
+	  		.catch(() => {}); 
+		/* 获取科室 */
+		roomList()
+			.then(r=>{
+				this.rooms=r
+			})
+			.catch(()=>{})
+			
+		/* 根据大类编号查询科室 */
+		roomListById()
+		.then(n=>{
+			this.roombyid=n
+		})
+		.catch(()=>{})
 	  },
 	  mounted() {
 		  //定时器
-	  	this.timer = setInterval(() => {this.gotoPage(this.nextIndex)}, 2000);
+	  	this.timer = setInterval(() => {this.gotoPage(this.nextIndex)}, 2000)
 	  },
 	  methods: {
+		  
+		
+		  
+		 goroom(id){
+			 this.id = id;
+			 this.showEditDialog = true
+		 } ,
 	    gotoPage(index) {
 	      this.currentIndex = index;
 	    },
@@ -204,6 +218,7 @@
 	    
 	  },
 	  computed: {
+		  
 	    //上一张
 	    prevIndex() {
 	      if(this.currentIndex == 0) {
@@ -221,6 +236,7 @@
 	      }
 	    },
 	  },
+	  components: { Edit }
 	}
 </script>
 
@@ -277,15 +293,17 @@
             height: 40px;
             cursor: auto;
 			color: #FFFFFF;
+			cursor: pointer;
         }
 		.ui-department:hover{
 			color: #0055ff;
 		}
         .ui-department .msg{
+			text-align: left;
             display: none;
-            width: 130px;
-            height: 30px;
-			margin-left: 95px;
+            width: 400px;
+            height: 200px;
+			margin-left: 92px;
             border: 1px solid #00ffff ;
             background:rgba(255,255,255,0.55);
             z-index: 2;
@@ -294,16 +312,17 @@
         }
 		.ui-department .msg a{
 		    color: #000000;
+			margin-right: 20px;
 		}
         .ui-department .msg a:hover{
 			color: #0086F1;
             cursor: pointer;
         }
         .clearfix:after{
-			content:"0";
+			/* content:"0"; */
 			display: block;
 			clear: both;
-			visibility: hidden;
+			/* visibility: hidden; */
 			height: 0;
         }
         .ui-department:hover .msg{
