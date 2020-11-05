@@ -55,8 +55,12 @@
 	    },
 		
 		depdoctor(id){
-			this.id = id
-			this.$router.push("/depdoctor")
+			this.$router.push({
+				name:'depdoctor',
+				params:{
+					id:id
+				}
+			})
 		},
 	  },
 	  
