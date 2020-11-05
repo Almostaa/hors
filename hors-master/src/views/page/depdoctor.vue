@@ -27,12 +27,12 @@
 		
 		<div class="single-member effect-3" v-for="d in douser" style="margin-left: 110px;">
 		  <div class="member-image">
-		    <img :src="d.img">
+		    <img :src="d.picture" />
 		  </div>
 		  <div class="member-info">
-		    <h3 >{{d.name}}</h3>
+		    <h3 >{{d.dname}}</h3>
 		    <h5>{{d.rank}}</h5>
-		    <p>{{d.desc}}</p>
+		    <p>{{d.describe}}</p>
 		    <div class="social-touch">
 		      <a class="linkedin-touch" @click="fast()" style="width: 100px;">点击预约</a>
 		    </div>
@@ -53,24 +53,28 @@
 </template>
 
 <script>
-	import img1 from "../../assets/home/1.png"
+	
+	import {getDoctorList} from "../../api/doctor.js"
 	export default {
 	  data() {
 	    return {
-			douser:[
-				{
-					img:img1, name:"张三",rank:'主任',desc:"创立武当派、振兴道教、发扬太极拳、武学泰山北斗"
-				},
-				{
-					img:img1, name:"张三",rank:'主任',desc:"创立武当派、振兴道教、发扬太极拳、武学泰山北斗"
-				},
-				{
-					img:img1, name:"张三",rank:'主任',desc:"创立武当派、振兴道教、发扬太极拳、武学泰山北斗"
-				},
-			]
+			douser:[],
+			id:'',
 	    };
 	  },
+	  created() {
+	  	this.id=this.$route.params.id;
+		console.log("sss"+this.id)
+		getDoctorList({id:this.id})
+		.then(n=>{
+			console.log(n)
+			this.douser=n
+			this.$parent.id=null;
+		})
+		.catch(()=>{})
+	  },
 	  methods: {
+		 	
 	    handleSelect(key, keyPath) {
 	      console.log(key, keyPath);
 	    },
