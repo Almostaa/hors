@@ -9,5 +9,7 @@ public interface DoctorService {
     /*查询某科室的医生*/
     List<Doctor> doctorlist(Integer roomNo);
 
+    /*根据编号查询医生所有信息*/
+    Doctor selectByPrimaryKey(Integer dno);
 
 }
