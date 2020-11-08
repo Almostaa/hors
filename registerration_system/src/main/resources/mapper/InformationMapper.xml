@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.InformationMapper">
+  <resultMap id="BaseResultMap" type="com.sesame.pojo.Information">
+    <id column="pno" jdbcType="INTEGER" property="pno" />
+    <result column="informationTypeNo" jdbcType="INTEGER" property="informationtypeno" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="subtitle" jdbcType="VARCHAR" property="subtitle" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="video" jdbcType="VARCHAR" property="video" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    pno, informationTypeNo, title, subtitle, content, createTime, author, picture, video
+  </sql>
+
+  <!--
+    /*根据类型编号查询资讯*/
+    Information selectByInforId(Integer ino);
+  -->
+  <select id="selectByInforId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from information
+    where informationTypeNo = #{informationtypeno,jdbcType=INTEGER}
+  </select>
+
+  <!--
+    /*查询所有资讯*/
+    List<Information> selectInfoList(Map<String,Object> inforMap);
+  -->
+  <select id="selectInfoList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from information
+  </select>
+
+</mapper>

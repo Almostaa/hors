@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.RotationMapper">
+  <resultMap id="BaseResultMap" type="com.sesame.pojo.Rotation">
+    <id column="rotNo" jdbcType="INTEGER" property="rotno" />
+    <result column="rotPicture" jdbcType="VARCHAR" property="rotpicture" />
+    <result column="rotDescribe" jdbcType="VARCHAR" property="rotdescribe" />
+    <result column="rotCreate" jdbcType="TIMESTAMP" property="rotcreate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    rotNo, rotPicture, rotDescribe, rotCreate
+  </sql>
+  <!--
+    /*查询轮播图*/
+    List<Rotation> selectByPrimaryKey();
+  -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from rotation
+  </select>
+
+</mapper>

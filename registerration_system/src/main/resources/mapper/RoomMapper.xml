@@ -10,76 +10,10 @@
   <sql id="Base_Column_List">
     roomNo, roomName, RoomDescribe, sectionNo
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from room
-    where roomNo = #{roomno,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from room
-    where roomNo = #{roomno,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.sesame.pojo.Room">
-    insert into room (roomNo, roomName, RoomDescribe, 
-      sectionNo)
-    values (#{roomno,jdbcType=INTEGER}, #{roomname,jdbcType=VARCHAR}, #{roomdescribe,jdbcType=VARCHAR}, 
-      #{sectionno,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.sesame.pojo.Room">
-    insert into room
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="roomno != null">
-        roomNo,
-      </if>
-      <if test="roomname != null">
-        roomName,
-      </if>
-      <if test="roomdescribe != null">
-        RoomDescribe,
-      </if>
-      <if test="sectionno != null">
-        sectionNo,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="roomno != null">
-        #{roomno,jdbcType=INTEGER},
-      </if>
-      <if test="roomname != null">
-        #{roomname,jdbcType=VARCHAR},
-      </if>
-      <if test="roomdescribe != null">
-        #{roomdescribe,jdbcType=VARCHAR},
-      </if>
-      <if test="sectionno != null">
-        #{sectionno,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.sesame.pojo.Room">
-    update room
-    <set>
-      <if test="roomname != null">
-        roomName = #{roomname,jdbcType=VARCHAR},
-      </if>
-      <if test="roomdescribe != null">
-        RoomDescribe = #{roomdescribe,jdbcType=VARCHAR},
-      </if>
-      <if test="sectionno != null">
-        sectionNo = #{sectionno,jdbcType=INTEGER},
-      </if>
-    </set>
-    where roomNo = #{roomno,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.sesame.pojo.Room">
-    update room
-    set roomName = #{roomname,jdbcType=VARCHAR},
-      RoomDescribe = #{roomdescribe,jdbcType=VARCHAR},
-      sectionNo = #{sectionno,jdbcType=INTEGER}
-    where roomNo = #{roomno,jdbcType=INTEGER}
-  </update>
-
+    <!--
+      /* 根据大类查询科室*/
+    List<Room> roomListById(Integer id);
+    -->
     <select id="roomListById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
@@ -87,6 +21,10 @@
         where sectionNo = #{sectionNo,jdbcType=INTEGER}
     </select>
 
+    <!--
+      /*查询所有科室*/
+    List<Room> roomList();
+    -->
     <select id="roomList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />

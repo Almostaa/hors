@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.InforTypeMapper">
+  <resultMap id="BaseResultMap" type="com.sesame.pojo.InforType">
+    <id column="informationTypeNo" jdbcType="INTEGER" property="informationtypeno" />
+    <result column="informationTypeName" jdbcType="VARCHAR" property="informationtypename" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    informationTypeNo, informationTypeName
+  </sql>
+  <!--
+     /*查询所有资讯类型*/
+    List<InforType> selectInfor();
+  -->
+  <select id="selectInfor" parameterType="com.sesame.pojo.InforType" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from information_type
+  </select>
+
+  <!--
+    /*查询所有分类id*/
+    List<InforType> selectId();
+  -->
+  <select id="selectId" resultMap="BaseResultMap">
+    select
+    informationTypeNo
+    from information_type
+  </select>
+
+</mapper>

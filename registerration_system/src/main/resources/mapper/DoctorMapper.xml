@@ -14,118 +14,22 @@
   <sql id="Base_Column_List">
     dno, dname, sex, roomNo, rank, grade, `describe`, picture
   </sql>
+
+  <!--
+    /*根据编号查询医生所有信息*/
+    Doctor selectByPrimaryKey(Integer dno);
+  -->
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from doctor
     where dno = #{dno,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from doctor
-    where dno = #{dno,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.sesame.pojo.Doctor">
-    insert into doctor (dno, dname, sex, 
-      roomNo, rank, grade, 
-      describe, picture)
-    values (#{dno,jdbcType=INTEGER}, #{dname,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
-      #{roomno,jdbcType=INTEGER}, #{rank,jdbcType=VARCHAR}, #{grade,jdbcType=VARCHAR}, 
-      #{describe,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.sesame.pojo.Doctor">
-    insert into doctor
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="dno != null">
-        dno,
-      </if>
-      <if test="dname != null">
-        dname,
-      </if>
-      <if test="sex != null">
-        sex,
-      </if>
-      <if test="roomno != null">
-        roomNo,
-      </if>
-      <if test="rank != null">
-        rank,
-      </if>
-      <if test="grade != null">
-        grade,
-      </if>
-      <if test="describe != null">
-        describe,
-      </if>
-      <if test="picture != null">
-        picture,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="dno != null">
-        #{dno,jdbcType=INTEGER},
-      </if>
-      <if test="dname != null">
-        #{dname,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        #{sex,jdbcType=VARCHAR},
-      </if>
-      <if test="roomno != null">
-        #{roomno,jdbcType=INTEGER},
-      </if>
-      <if test="rank != null">
-        #{rank,jdbcType=VARCHAR},
-      </if>
-      <if test="grade != null">
-        #{grade,jdbcType=VARCHAR},
-      </if>
-      <if test="describe != null">
-        #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="picture != null">
-        #{picture,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.sesame.pojo.Doctor">
-    update doctor
-    <set>
-      <if test="dname != null">
-        dname = #{dname,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        sex = #{sex,jdbcType=VARCHAR},
-      </if>
-      <if test="roomno != null">
-        roomNo = #{roomno,jdbcType=INTEGER},
-      </if>
-      <if test="rank != null">
-        rank = #{rank,jdbcType=VARCHAR},
-      </if>
-      <if test="grade != null">
-        grade = #{grade,jdbcType=VARCHAR},
-      </if>
-      <if test="describe != null">
-        describe = #{describe,jdbcType=VARCHAR},
-      </if>
-      <if test="picture != null">
-        picture = #{picture,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where dno = #{dno,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.sesame.pojo.Doctor">
-    update doctor
-    set dname = #{dname,jdbcType=VARCHAR},
-      sex = #{sex,jdbcType=VARCHAR},
-      roomNo = #{roomno,jdbcType=INTEGER},
-      rank = #{rank,jdbcType=VARCHAR},
-      grade = #{grade,jdbcType=VARCHAR},
-      describe = #{describe,jdbcType=VARCHAR},
-      picture = #{picture,jdbcType=VARCHAR}
-    where dno = #{dno,jdbcType=INTEGER}
-  </update>
 
+  <!--
+    /*查询某科室的医生*/
+    List<Doctor> doctorlist(Integer roomNo);
+  -->
   <select id="doctorlist" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
