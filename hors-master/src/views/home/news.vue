@@ -17,36 +17,36 @@
 		</div>
 		<div id="nav" class="nav">
 		    <div class="wrap">
-		        <div class="link menu" @click="home()">全部科室</div>
-		        <a class="link" @click="problem()">专家问诊</a>
-		        <a class="link" @click="news()">健康资讯</a>
-		        <a class="link" @click="user()">个人中心</a>
+		        <div class="link menu" @click="home()" style="cursor: pointer;">全部科室</div>
+		        <a class="link" @click="problem()" style="cursor: pointer;">专家问诊</a>
+		        <a class="link" @click="news()" style="cursor: pointer;">健康资讯</a>
+		        <a class="link" @click="user()" style="cursor: pointer;">个人中心</a>
 		    </div>
 		</div>
 		
 		<div>
 			<div style= "position:relative " class="aaaa"> 
 				<div style= "position:absolute; left:200px; top: 350px; color:#000000; font-weight:bold ;z-index: 1;">
-					<a href="https://www.91huayi.com/contents/3/25842.html" style="color: #000000;font-size: 20px;">
-						国家医保局官宣！医保支付将发生重大改革！</a> 
+					<a href="" style="color: #000000;font-size: 20px;">
+						{{newsid1.newstitle}}</a> 
 				</div> 
-				<a href="https://www.91huayi.com/contents/3/25842.html"><img :src="img1" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid1.newspicture" /></a> 
 			</div>
 			<div style= "position:relative " class="aaa">
 				<div style= "position:absolute; left:610px; top: 160px; color:#000000; font-weight:bold;z-index: 1; ">
-					<a href="https://www.91huayi.com/contents/3/25834.html" style="color: #000000;font-size: 15px;">
-						青岛疫情密接者大幅度上升！
+					<a href="" style="color: #000000;font-size: 15px;">
+						{{newsid2.newstitle}}
 					</a> 
 				</div> 
-				<a href="https://www.91huayi.com/contents/3/25834.html"><img :src="img1" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid2.newspicture" /></a> 
 			</div>
 			<div style= "position:relative " class="aa">
 				<div style= "position:absolute; left:610px; top: 360px; color:#000000; font-weight:bold;z-index: 1; ">
-					<a href="https://www.91huayi.com/contents/3/25833.html" style="color: #000000;font-size: 15px;">
-						青岛疫情，张文宏最新判断！
+					<a href="" style="color: #000000;font-size: 15px;">
+						{{newsid3.newstitle}}
 					</a> 
 				</div> 
-				<a href="https://www.91huayi.com/contents/3/25833.html"><img :src="img1" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid3.newspicture" /></a> 
 			</div>
 			<div style="margin-right: 30px;">
 				<div class="new_list_con">
@@ -57,38 +57,50 @@
 						</a>
 					</h3>
 					<div>
-						<li><a href="">原因并不只有天气9999999999</a><span>2017-12-15</span></li>
-						<li><a href="">原因并不只有天气wwwwddxxw</a><span>2017-12-15</span></li>
-						<li><a href="">原因并不只有天气wwwwwwwww</a><span>2017-12-15</span></li>
+						<li v-for="i in selectlist">
+							<a href="">{{i.content}}</a>
+							<span>{{i.createtime | formatTimeToStr}}</span>
+						</li>
 					</div>
 				</div>
 			</div>
 		</div>
-		
-		<!-- <div id="ttt" class="ttt">
-		    <div class="wrap">
-		        <div class="link menu">分类</div>
-		        <a class="link" @click="problem()">专家问诊</a>
-		        <a class="link" @click="news()">健康资讯</a>
-		        <a class="link" @click="user()">个人中心</a>
-		    </div>
-		</div> -->
+
 		<div style="margin-top: 420px;margin-left: 100px;margin-right: 100px;">
 		      <div style="color: #333333;">
 		        <el-tabs v-model="activeName" type="card">
 		          <el-tab-pane
 		            v-for="item in categoryList"
-		            :key="item.category_id"
-		            :label="item.category_name"
-		            :name="''+item.category_id"
+		            :key="item.informationtypeno"
+		            :label="item.informationtypename"
+		            :name="''+item.informationtypeno"
 		          />
 		        </el-tabs>
 		      </div>
 			  
-			  
+			  <!-- 主要内容区 -->
+			  <div class="main">
+			    <div class="list">
+			      <MyList :list="product" v-if="product.length>0"></MyList>
+			      <div v-else class="none-product">抱歉没有找到相关的资讯，请看看其他的分类</div>
+			    </div>
+			    <!-- 分页 -->
+			    <div class="pagination">
+			      <el-pagination
+			        background
+			        layout="prev, pager, next"
+			        :page-size="pageSize"
+					:current-page="pageNo"
+			        :total="total"
+			        @current-change="currentChange"
+			      ></el-pagination>
+			    </div>
+			    <!-- 分页END -->
+			  </div>
+			  <!-- 主要内容区END -->
 		</div>
 		
-		<div style="height: 70px;width: 100%;position: fixed;bottom: 0;text-align: center;">
+		<div style="height: 70px;width: 100%;bottom: 0;text-align: center;">
 			<br />
 			<p style="font-size:12px;text-align:center;">
 				Copyright 2020 多吃黑芝麻.AllRightsReserved. 
@@ -102,23 +114,116 @@
 </template>
 
 <script>
-	import img1 from "../../assets/home/1.png"
+	
+	import {formatTimeToStr} from "../../config/date"; 
+	import {newsById , selectList} from "../../api/rotation.js"
+	import { serverApiUrl } from "../../config/apiUrl" 
+	import { infortypelist,inforlist} from "../../api/infor.js" 
+	import MyList from "../../components/MyList.vue"
 	export default {
+		filters:{
+		    formatTimeToStr:function(time){
+				return formatTimeToStr(time);
+		    },
+		 },
 	  data() {
 	    return {
-			categoryList:[
-				{category_id:1,category_name:"热门"},
-				{category_id:2,category_name:"今日更新"},
-			],
-			activeName:'',
-			img1:img1,
+			categoryList:[],// 分类列表
+			categoryID: [], // 分类id
+			product: "", // 资讯列表
+			
+			total: null, // 总量
+			pageSize: 1, // 每页显示的数量
+			pageNo: 1, //当前页码
+			activeName: "-1", // 分类列表当前选中的id
+			
+			newsid1:{},
+			newsid2:{},
+			newsid3:{},
+			selectlist:[],
+			serviceImgURl: serverApiUrl+'/images/news/',
 	    };
+	  },
+	  created() {
+		
+		// 获取分类列表
+		this.getCategory();
+		// 获取数据
+	  	this.getlist();
+		
+		// 如果路由没有传递参数，默认为显示全部资讯
+		if (Object.keys(this.$route.query) == 0) {
+		  this.categoryID = [];
+		  this.activeName = "0";
+		  return;
+		}
+		// 如果路由传递了categoryID，则显示对应的分类资讯
+		if (this.$route.query.categoryID != undefined) {
+		  this.categoryID = this.$route.query.categoryID;
+		  if (this.categoryID.length == 1) {
+		    this.activeName = "" + this.categoryID[0];
+		  }
+		  return;
+		}
+	  },
+	
+	  watch: {
+	    // 监听点击了哪个分类标签，通过修改分类id，响应相应的资讯
+	    activeName: function(val) {
+	      if (val == 0) {
+			this.pageNo = 1; //初始化当前页码为1
+	        this.categoryID = [];
+	      }
+	      if (val > 0) {
+			this.pageNo = 1; //初始化当前页码为1
+	        this.categoryID = [Number(val)];
+	      }
+	    },
+	    // 监听分类id，响应相应的资讯
+	    categoryID: function() {
+	      this.getData();
+	    },
 	  },
 	  
 	  methods: {
-	    handleSelect(key, keyPath) {
-	      console.log(key, keyPath);
-	    },
+		  
+		  // 页码变化调用currentChange方法
+		  currentChange(v) {
+				this.pageNo = v;
+				console.log(this.pageNo+"传值")
+				//根据新的页面选取分页数据
+				this.getData();
+		  },
+		  // 向后端请求分类列表数据
+		  getCategory() {
+			  infortypelist()
+				  .then(res => {
+					const val = {
+					  informationtypeno: 0 ,
+					  informationtypename: "全部"
+					};
+					const cate = res;
+					cate.unshift(val);
+					this.categoryList = cate;
+				  })
+				  .catch(err => {});
+		  },
+		  // 向后端请求全部资讯或分类资讯数据
+		  getData() {
+			console.log(this.pageNo)
+		    // 如果分类列表为空则请求全部资讯数据，否则请求分类资讯数据
+		    const api =
+		      this.categoryID == 0
+		        ? "http://localhost:8088/infor/inforlist?pageNo="+this.pageNo+"&pageSize="+this.pageSize
+		        : "http://localhost:8088/infor/setinforbyid?ino="+this.categoryID+"&pageNo="+this.pageNo+"&pageSize="+this.pageSize
+				this.$axios.get(api)
+				  .then(res => {
+					console.log(res)
+					this.product = res.data.list;
+					this.total = res.data.total;
+				  })
+				  .catch(err => {});
+		  },
 		  problem(){
 			  this.$router.push('/problem')
 		  },
@@ -131,7 +236,33 @@
 		  user(){
 			  this.$router.push("/user")
 		  },
-	  }
+		  getlist(){
+			  newsById({id:1})
+			  	.then(r=>{
+			  		this.newsid1=r;
+			  	})
+			  	.catch(()=>{})
+			  	
+			  newsById({id:2})
+			  	.then(r=>{
+			  		this.newsid2=r;
+			  	})
+			  	.catch(()=>{})
+			  	
+			  newsById({id:3})
+			  	.then(r=>{
+			  		this.newsid3=r;
+			  	})
+			  	.catch(()=>{})
+			  	
+			  selectList()
+			  	.then(r=>{
+			  		this.selectlist=r;
+			  	})
+			  	.catch(()=>{})
+		  }
+	  },
+	  components:{MyList}
 	}
 </script>
 
@@ -179,26 +310,6 @@
 	     height: 199px;
 	     transform: scale(1.1, 1.1);
 	  }
-</style>
-<style>
-	.ttt .link{
-	    display: inline-block;
-	    font-size: 15px;
-	    padding-left: 30px;
-		margin-top: 420px;
-	    min-width:100px;
-	    text-align: center;
-	    color:#fff;
-		background-color: #333333;
-	}
-	.ttt .menu{
-	    width:100px;
-	    padding-right:30px;
-	    position: relative;
-	}
-	.ttt a:hover{
-	    color:#ff0000;
-	}
 </style>
 <style>
         .new_list_con{

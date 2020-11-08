@@ -17,12 +17,10 @@
 		</div>
 		<div id="nav" class="nav">
 		    <div class="wrap">
-		        <div class="link menu" @click="home()">全部科室
-		          
-		        </div>
-		        <a class="link" @click="problem()">专家问诊</a>
-		        <a class="link" @click="news()">健康资讯</a>
-		        <a class="link" @click="user()">个人中心</a>
+		        <div class="link menu" @click="home()" style="cursor: pointer;">全部科室</div>
+		        <a class="link" @click="problem()" style="cursor: pointer;">专家问诊</a>
+		        <a class="link" @click="news()" style="cursor: pointer;">健康资讯</a>
+		        <a class="link" @click="user()" style="cursor: pointer;">个人中心</a>
 		    </div>
 		</div>
 		

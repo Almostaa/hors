@@ -27,53 +27,41 @@
 		<!-- 首页板块 -->
 		<div id="nav" class="nav">
 		    <div class="wrap">
-		        <div class="link menu" @click="home()">全部科室
+		        <div class="link menu" @click="home()" style="cursor: pointer;">全部科室
 		            <div class="menu-list ui-menu" style="overflow:scroll;">
 		                <div class="ui-menu-item" v-for="o in offices" >
 		                    <div class="ui-department clearfix" :id="o.sectionno" @click="goroom(o.sectionno)">
 								{{o.sectionname}}
-								<!-- <div class="msg" v-for="v in roombyid">
-									<a @click="depdoctor(id)">心脑血管科室</a>
-									<a @click="depdoctor(id)">心脑血管科室</a>
-									<a @click="depdoctor(id)">心脑血管科室</a>
-									<a @click="depdoctor(id)">心脑血管科室</a>
-								</div> -->
 							</div>
-							
-							
-		                    <!-- <div class="ui-menu-item-detail">
-		                        <div class="ui-detail-group">
-		                            <div class="ui-detail-group-list">
-		                                <a href="#">心脑血管科室</a>
-		                                <a href="#">神经内科</a>
-		                                <a href="#">内分泌科室</a>
-		                                <a href="#">血液科</a>
-		                                <a href="#">心脑血管科室</a>
-		                            </div>
-		                        </div>
-		                    </div> -->
 		                </div>
 		            </div>
 				</div>
-		       <a class="link" @click="problem()">专家问诊</a>
-		       <a class="link" @click="news()">健康资讯</a>
-		       <a class="link" @click="user()">个人中心</a>
+		       <a class="link" @click="problem()" style="cursor: pointer;">专家问诊</a>
+		       <a class="link" @click="news()" style="cursor: pointer;">健康资讯</a>
+		       <a class="link" @click="user()" style="cursor: pointer;">个人中心</a>
 		    </div>
 		</div>
 		
 		<div id="banner" class="banner">
 			<!-- 轮播图 -->
 			<div class="ui-slide-wrap" id="imgs">
-			  <div>
+				<el-carousel trigger="click" height="490px">
+				    <el-carousel-item v-for="(item,i) in carouselList" :key="i">
+				        <img :src="serviceImgURl+item.rotpicture" />
+				    </el-carousel-item>
+				</el-carousel>
+				
+			  <!-- <div>
 			    <img :src="carouselList[currentIndex]">
 			  </div>
 			  <div class="page" v-if="this.carouselList.length > 1">
 			    <ul>
 			      <li @click="gotoPage(prevIndex)">&lt;</li>
-			      <li v-for="(item,index) in carouselList" @click="gotoPage(index)" :class="{'current':currentIndex == index}">  {{index+1}}</li>
+			      <li v-for="(item,index) in carouselList" @click="gotoPage(index)"
+						:class="{'current':currentIndex == index}">{{index+1}}</li>
 			      <li @click="gotoPage(nextIndex)">&gt;</li>
 			    </ul>
-			  </div>
+			  </div> -->
 			</div>
 		    <!-- 快速预约-->
 			<div class="banner-search">
@@ -101,13 +89,12 @@
 					</div>
 		        </div>
 		        <div class="submit">
-		            <el-button class="button" @click="fast()" 
-					>快速查询</el-button>
+		            <el-button class="button" @click="fast(options.dno)">快速查询</el-button>
 		        </div>
 		    </div>
 			<div class="banner-help">
 			    <div class="caption"><span class="text">帮助中心</span></div>
-			        <a @click="about()" class="link">关于我们</a>
+			        <a @click="about()" class="link" style="cursor: pointer;">关于我们</a>
 			        <a href="#" class="link">预约指南</a>
 			        <a href="https://www.baidu.com/" class="link">友情链接</a>
 			        <a href="#" class="link">常见问题</a>
@@ -129,21 +116,18 @@
 </template>
 
 <script>
-	import img1 from "../assets/home/1.png"
-	import img2 from "../assets/home/2.png"
-	import img3 from "../assets/home/3.png"
-	import img4 from "../assets/home/4.png"
-	
-	
+
+	import { serverApiUrl } from "../config/apiUrl" 
 	import Edit from "./gorooms.vue";
 	import {sectionlist ,roomList ,roomListById} from "../api/section.js"
 	import {getDoctorList} from "../api/doctor.js"
+	import {rotationlist} from "../api/rotation.js"
 	export default {
 	  name: 'Home',
 	  data() {
 		return {
-			carouselList:[img1,img2,img3,img4],//轮播图
-			currentIndex: 0,   //默认显示图片
+			carouselList:[],//轮播图
+			currentIndex: 1,   //默认显示图片
 			timer: null ,   //定时器
 			value:'',
 			offices:[],
@@ -152,6 +136,7 @@
 			options: [],
 			showEditDialog: false,
 			num:'',
+			serviceImgURl: serverApiUrl+'/images/home/',
 		};
 	  },
 	  created() {
@@ -168,6 +153,14 @@
 			})
 			.catch(()=>{})
 	
+		/* 获取轮播图图片 */
+		rotationlist()
+			.then(p=>{
+				console.log(p)
+				this.carouselList=p;
+			})
+			.catch(()=>{})
+		
 	  },
 	  mounted() {
 		  //定时器
@@ -215,8 +208,13 @@
 		register(){
 			this.$router.push("/register")
 		},
-		fast(){
-			this.$router.push("/fast")
+		fast(id){
+			this.$router.push({
+				name:'fast',
+				params:{
+					id:id
+				}
+			})
 		},
 		depdoctor(id){
 			this.$router.push("/depdoctor")
@@ -272,10 +270,10 @@
       }
       #imgs img {
           width: 100%;
-		  height: 378px;
+		  height: 420px;
           display: block;
       }
-      #imgs .page {
+      /* #imgs .page {
           background: rgba(0,0,0,.5);
           position: absolute;
           right: 0;
@@ -284,7 +282,7 @@
       }
       #imgs .page ul {
           float: right;
-      }
+      } */
       .current {
           color: #ff6700;
       }

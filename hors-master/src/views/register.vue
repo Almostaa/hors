@@ -2,25 +2,25 @@
 	  <div class="poster">
 		<el-form class="register-container" label-position="left" ref="registerForm" :model="registerForm" :rules='rules'>
 		  <h3 class="register_title">患者注册平台</h3>
-		  <el-form-item  prop="phonenumber">
+		  <el-form-item prop="phoneNumber">
 		      <el-input size="medium" v-model="registerForm.phonenumber" placeholder="联系电话"></el-input>
 		  </el-form-item>
 		  <el-form-item prop="code">
-		  		<el-input v-model="code" 
+		  		<el-input v-model="registerForm.code" 
 				 style="width: 55%;"
 				 size="medium"
 				 placeholder="验证码"></el-input>
 				<el-button style="float: right;margin-top: 3px;width: 40%;border: 0;"  size="medium"
 				 @click="setsmCode()" :disabled="isDisabled">{{buttonText}}</el-button>
 		  </el-form-item>
-		  <el-form-item prop="password">
+		  <el-form-item prop="passWord">
 			<el-input type="password" size="medium" v-model="registerForm.password"  placeholder="密码" show-password></el-input>
 		  </el-form-item>
 		  <el-form-item >
 		      <el-button size="medium" type="primary" 
 			  style="width: 100%;border: none;color: #000000;"
-			   :disabled="!(code && registerForm.password && registerForm.phonenumber )"
-			   @click="submitForm()">注册</el-button>
+			   :disabled="!(registerForm.code && registerForm.password && registerForm.phonenumber )"
+			   @click="submitForm('registerForm')">注册</el-button>
 			   <el-button type="text" class="register-tips" @click="handleLogin()">已有账号，去登录>></el-button>
 		  </el-form-item>
 			
@@ -68,9 +68,9 @@
             return {
                 registerForm: {
                     phonenumber: '',
-                    password: ''					
+					code:'',
+					password: '',
                 },
-				code:'',
 				formList:{},
 				rules:{
 					phonenumber: [
@@ -115,55 +115,31 @@
 				.catch(()=>{});	
 			},
 			//提交注册
-			submitForm() {
-				
-				const user={
-					phonenumber:this.registerForm.phonenumber,
-					password:this.registerForm.password,
-				}
-				const code=this.code
-				
-				 this.$axios({
-					method: 'post',
-					url: 'http://localhost:8088/user/register',
-					data: {user,code}
+			submitForm(registerForm) {
+				this.$refs[registerForm].validate(valid => {
+				  if (valid) {
+							registerform({
+								phoneNumber:this.registerForm.phonenumber,
+								passWord:this.registerForm.password,
+								code:this.registerForm.code
+							})
+							.then(r => {
+							  console.log(r);
+							  this.$message({
+							    type: "success",
+							    message: r.msg
+							  });
+							  if(r.msg === '注册成功'){
+							  	this.handleLogin()
+							  }
+							})
+							.catch(() => {});
+				  } else {
+				    console.log("error submit!!");
+				    return false;
+				  }
 				})
-				.then(data => {
-					console.log("code"+data)
-				}).catch(() => {});
-				 
-				
-				/* registerform({
-					user:this.registerForm,
-				})
-				.then(r => { 
-					console.log("sss"+r) */
-					/* const obj={
-						user:this.registerForm,
-					}
-					const code=this.code
-					this.$axios.post("http://localhost:8088/user/register",obj,code)
-					.then(data => {
-						console.log("code"+data)
-					}).catch(() => {}); */
-				/* }).catch(() => {}); */
-				
-				
-				/* this.formList = this.registerForm,
-				console.log( this.formList)
-				console.log( this.code)
-				console.log( this.formList,this.code)
-				registerform({
-					user:this.formList,
-					code:this.code
-				})
-				.then(r => {
-					console.log('呱呱呱呱呱呱呱呱呱'+r)
-				})
-				.catch(() => {}); */
-					      
 			},	
-
             handleLogin() {
                 this.$router.push('/login')
             },

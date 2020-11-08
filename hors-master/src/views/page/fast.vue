@@ -29,14 +29,14 @@
 			<!-- 医生信息 -->
 			<div class="iii">
 				<div class="img">
-					<img :src="douser.img" />
+					<img :src="serviceImgURl+douser.picture" />
 				</div>
 				<div class="lll">
-					<h4>{{douser.name}}</h4>
-					<span style="font-size: 10px;">{{douser.currentDate}}</span>
+					<h4>{{douser.dname}}</h4>
+					<span style="font-size: 10px;">{{douser.rank}}</span>
 					<p style="height: 10px;"></p>
 					<p>简介：</p>
-					<p style="text-indent: 2em;">{{douser.desc}}</p>
+					<p style="text-indent: 2em;">{{douser.describe}}</p>
 				</div>
 			</div>
 			
@@ -104,23 +104,31 @@
 </template>
 
 <script>
-	import img1 from "../../assets/home/3.png"
-	import img2 from "../../assets/home/2.png"
+	
+	import {getDoctorInfor} from "../../api/doctor.js"
+	import { serverApiUrl } from "../../config/apiUrl" 
 	export default {
 	  data() {
 	    return {
-			douser:{
-				  img:img1, 
-				  name:'zhzhzzhhz',
-				  desc:'vvvvvvvvvvvvvv9999999999999999999999888888888888888888888888888888888888888888888888888888888999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999vv5iu',
-				  currentDate:'2020-10-13'
-			  },
+			douser:{},
 			week:[],
 			same_week:[],//保存当前最新的时间
 			same_day:'',//当天的时间
+			serviceImgURl: serverApiUrl+'/images/doctor/',
 	    };
 	  },
 	  created() {
+		  this.id=this.$route.params.id;
+		  console.log("sss"+this.id)
+		  getDoctorInfor({id:this.id})
+		  .then(n=>{
+		  	console.log(n)
+		  	this.douser=n
+		  	this.$parent.id=null;
+		  })
+		  .catch(()=>{})
+		  
+		  
 	      // 默认显示当天前一周的数据
 	      let data=[]
 	      this.start=this.getDay(+7);

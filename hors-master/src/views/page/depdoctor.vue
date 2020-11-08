@@ -27,7 +27,7 @@
 		
 		<div class="single-member effect-3" v-for="d in douser" style="margin-left: 110px;">
 		  <div class="member-image">
-		    <img :src="d.picture" />
+		    <img :src="serviceImgURl+d.picture" />
 		  </div>
 		  <div class="member-info">
 		    <h3 >{{d.dname}}</h3>
@@ -55,11 +55,13 @@
 <script>
 	
 	import {getDoctorList} from "../../api/doctor.js"
+	import { serverApiUrl } from "../../config/apiUrl" 
 	export default {
 	  data() {
 	    return {
 			douser:[],
 			id:'',
+			serviceImgURl: serverApiUrl+'/images/doctor/',
 	    };
 	  },
 	  created() {

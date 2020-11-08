@@ -79,14 +79,7 @@ const routes = [
       return import('../views/page/depdoctor.vue')
     }
   },
-  
-  {
-    path: '/Goods',
-    name: 'Goods',
-    component: function () {
-      return import('../views/page/Goods.vue')
-    }
-  },
+ 
   
 ]
 

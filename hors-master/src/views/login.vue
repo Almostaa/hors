@@ -19,7 +19,7 @@
 							style="width: 55%;"
 							placeholder="验证码"></el-input>
 							<el-button style="float: right; height: 40px;width: 40%;border: 0;" 
-							@click="setsmCode()" :disabled="isDisabled">{{buttonText}}</el-button>
+							@click="setsmCode('loginForm')" :disabled="isDisabled">{{buttonText}}</el-button>
 					</el-form-item>
 				</el-tab-pane>
 			  </el-tabs>
@@ -125,26 +125,33 @@
 				.catch(()=>{});	
 			},
 			//点击登录
-			clicklogin() {
-			    login({
-			        phonenumber: this.loginForm.phone,
-			        password: this.loginForm.password,
-					code:this.loginForm.code,
-			    }).then(r => {
-			        console.log("aaaa"+r.status);
-					console.log("bbaa"+r.data);
-			        if (r.code === 200) {
-			            /* setUserInfo(r.data.user);
-			            setToken(r.data.token);*/
-			            this.$router.push("/"); 
-			        } else {
-			            this.$message({
-							message: "用户名或密码错误！",
-							type: "error"
-						});
-			        }
-			    })
-			    .catch(() => {});
+			clicklogin(loginForm) {
+				this.$refs[loginForm].validate(valid => {
+				  if (valid) {
+				    login({
+				      phonenumber: this.loginForm.phone,
+				      password: this.loginForm.password,
+				      code:this.loginForm.code,
+				    })
+				      .then(r => {
+				        console.log(r);
+				        if (r.code === 200) {
+				          /* setUserInfo(r.data.user);
+				          setToken(r.data.token); */
+				          this.$router.push("/");
+				        } else {
+							this.$message({
+								message: "用户名或密码错误！",
+								type: "success"
+							});
+				        }
+				      })
+				      .catch(() => {});
+				  } else {
+				    console.log("error submit!!");
+				    return false;
+				  }
+				});
 			},
 			forget(){
 				this.$router.push('/forget')

@@ -32,7 +32,7 @@ export function registerform(params){
 	 return request({
 		 //如果是绝对路径就不会在使用配置里的url
 		 url: "/user/register", 
-		 method: "post",
-		 data: params //注意：如果是get请求请使用 params: params
+		 method: "get",
+		 params: params 
 	 });
 }
