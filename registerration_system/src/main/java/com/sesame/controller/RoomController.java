@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * RoomController 科室
+ * @author sfda
+ * @currentTime
+ */
+
 @RestController
 @RequestMapping(value = "room")
 public class RoomController {
@@ -17,7 +23,8 @@ public class RoomController {
 
     @RequestMapping(value = "roomlistbyid")
     public List<Room> roomListById(Integer id){
-        return roomService.roomListById(id);
+        List<Room> list = roomService.roomListById(id);
+        return list;
     }
 
     @RequestMapping(value = "roomlist")
