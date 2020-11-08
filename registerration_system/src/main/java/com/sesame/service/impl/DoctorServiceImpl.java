@@ -18,4 +18,9 @@ public class DoctorServiceImpl implements DoctorService {
     public List<Doctor> doctorlist(Integer roomNo) {
         return doctorMapper.doctorlist(roomNo);
     }
+
+    @Override
+    public Doctor selectByPrimaryKey(Integer id) {
+        return doctorMapper.selectByPrimaryKey(id);
+    }
 }
