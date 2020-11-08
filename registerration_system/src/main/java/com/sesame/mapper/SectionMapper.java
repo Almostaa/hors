@@ -4,16 +4,12 @@ import com.sesame.pojo.Section;
 
 import java.util.List;
 
+/*
+ * @author sfda
+ * 大类
+ */
 public interface SectionMapper {
-    int deleteByPrimaryKey(Integer sectionno);
 
-    int insert(Section record);
-
-    int insertSelective(Section record);
-
+    /*查询所有大类*/
     List<Section> selectByPrimaryKey();
-
-    int updateByPrimaryKeySelective(Section record);
-
-    int updateByPrimaryKey(Section record);
 }
