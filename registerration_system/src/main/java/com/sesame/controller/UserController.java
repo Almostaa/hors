@@ -36,9 +36,12 @@ public class UserController {
 	
 	/**用户注册*/
 	@RequestMapping(value="/register",method = RequestMethod.POST)
-	public RespBean  registeredUser(@RequestBody User user,@RequestParam String code) {
+	public RespBean  registeredUser(@RequestParam String phoneNumber,@RequestParam String passWord,@RequestParam String code) {
 		
 		System.out.println(session.getAttribute("codes"));
+		User user =new User();
+		user.setPhoneNumber(phoneNumber);
+		user.setPassWord(passWord);
 		try {
 			String vCode = session.getAttribute("codes").toString();
 			//拿session中存储的验证码与用户输入的验证码进行比较
@@ -62,8 +65,11 @@ public class UserController {
 	
 	/**用户登录：电话号+验证码or电话号+密码*/
 	@RequestMapping(value = "/login",method = RequestMethod.POST)
-	public ResponseData loginUser(@RequestBody User user,@RequestParam(required = false) String code) {
+	public ResponseData loginUser(@RequestParam String phoneNumber,@RequestParam(required = false)String passWord,@RequestParam(required = false) String code) {
 		
+		User user =new User();
+		user.setPhoneNumber(phoneNumber);
+		user.setPassWord(passWord);
 		
 		ResponseData responseData=null;		
 		String vCode=null;
@@ -134,16 +140,22 @@ public class UserController {
 	}
 	
 	/**
-	 * 完善用户信息（修改）和修改密码
-	 * @param user
-	 * @param code 验证码
-	 * @param newPossWd 新密码
-	 * @param comfirmPassWd 确认密码
+	 * 完善用户信息
+	 * @param userInfo 
+	 * 忘记（修改）密码
+	 * @param phoneNumber
+	 * @param code
+	 * @param newPossWd
+	 * @param comfirmPassWd
 	 * @return
 	 */
 	@RequestMapping(value = "/improveInfoOrModifyPW",method = RequestMethod.POST)
-	public RespBean improveInfoOrModifyPassWord(@RequestBody User user ,@RequestParam(required = false) String code ,@RequestParam(required = false) String newPossWd, @RequestParam(required = false) String comfirmPassWd) {
+	public RespBean improveInfoOrModifyPassWord(@RequestBody(required = false) User userInfo,@RequestParam(required = false) String phoneNumber ,@RequestParam(required = false) String code ,@RequestParam(required = false) String newPossWd, @RequestParam(required = false) String comfirmPassWd) {
 		
+		
+		User user =new User();
+		user.setPhoneNumber(phoneNumber);
+				
 		User users = userService.login(user);
 		int count=0;
 		
@@ -166,7 +178,7 @@ public class UserController {
 			}			
 		}else {
 			//完善用户信息
-			count= userService.improveUserInfo(user);
+			count= userService.improveUserInfo(userInfo);
 		}
 	
 		if(count>0) {
@@ -177,37 +189,5 @@ public class UserController {
 		}
 	}
 	
-	/**忘记密码-->*/
 	
-	public RespBean modifyPassWord(User user,String code ,String newPossWd,String comfirmPassWd) {
-		
-		String vCode=null;
-		try {
-			 vCode = session.getAttribute("codes").toString();
-			
-		} catch (Exception e) {
-			
-		}
-		User users = userService.login(user);
-		if(users!=null) {
-			
-			if(code.equals(vCode)&&(newPossWd==comfirmPassWd)) {
-				
-				//修改密码
-				userService.improveUserInfo(users);
-				
-				
-			}else {
-				
-				return new RespBean("error", "验证码或两次密码输入结果不一致");
-			}
-			
-		}else {
-			return new RespBean("error", "手机号不存在!");
-		}
-		return null;
-	}
-	
-	
-
 }
