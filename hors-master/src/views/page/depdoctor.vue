@@ -3,9 +3,12 @@
 		<div id="top" class="top">
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
-		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+		      <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
 		          <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
 		          <a @click="register()" style="cursor:pointer">注册</a>
+		      </p>
+		      <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+		      	<button @click="logout" type="button">退出登录</button>
 		      </p>
 		  </div>
 		</div>
@@ -25,7 +28,31 @@
 		    </div>
 		</div>
 		
-		<div class="single-member effect-3" v-for="d in douser" style="margin-left: 110px;">
+		<div class="single-member effect-3" style="margin-left: 110px;margin-right: 100px;">
+			<el-row >
+			  <el-col :span="6" v-for="(d,o) in douser" :key="o" style="padding: 40px;"  >
+					  <router-link :to="{ path: '/fast', query:{id:d.dno}}">
+						<el-card :body-style="{ padding: '0px' }" style="cursor: pointer;">
+						  <img :src="serviceImgURl+d.picture" class="image">
+						  <div style="padding: 4px;">
+							<span>{{d.dname}}</span>
+							<div>
+								<p style="text-indent: 2em;font-size: 5px;">{{d.rank}}</p>
+							</div>
+							<div class="bottom clearfix">
+							  <time class="time">{{d.describe}}</time>
+							  <el-button type="text" class="button">点击预约</el-button>
+							</div>
+						  </div>
+						</el-card>
+					  </router-link>
+			  </el-col>
+			</el-row>
+			 
+		</div>
+		
+		
+		<!-- <div class="single-member effect-3" v-for="d in douser" style="margin-left: 110px;" @click="fast(d.dno)">
 		  <div class="member-image">
 		    <img :src="serviceImgURl+d.picture" />
 		  </div>
@@ -34,10 +61,10 @@
 		    <h5>{{d.rank}}</h5>
 		    <p>{{d.describe}}</p>
 		    <div class="social-touch">
-		      <a class="linkedin-touch" @click="fast()" style="width: 100px;">点击预约</a>
+		      <a class="linkedin-touch"  style="width: 100px;">点击预约</a>
 		    </div>
 		  </div>
-		</div>
+		</div> -->
 		
 		<div style="height: 70px;width: 100%;position: fixed;bottom: 0;text-align: center;">
 			<br />
@@ -56,15 +83,24 @@
 	
 	import {getDoctorList} from "../../api/doctor.js"
 	import { serverApiUrl } from "../../config/apiUrl" 
+	import {getToken,getUserInfo} from "../../utils/common.js"
 	export default {
 	  data() {
 	    return {
+			usernumber:'',
+			token:null,
 			douser:[],
 			id:'',
 			serviceImgURl: serverApiUrl+'/images/doctor/',
 	    };
 	  },
 	  created() {
+		  
+		this.token = getToken()
+		this.usernumber=getUserInfo().phoneNumber
+		
+		console.log(this.$route.query);
+		
 	  	this.id=this.$route.params.id;
 		console.log("sss"+this.id)
 		getDoctorList({id:this.id})
@@ -98,14 +134,60 @@
 		  register(){
 		  	this.$router.push("/register")
 		  },
-		  fast(){
-		  	this.$router.push("/fast")
+		  fast(id){
+			this.$router.push({
+				name:'fast',
+				params:{
+					id:id
+				}
+			})
+		  },
+		  logout() {
+		  	localStorage.clear();
+		  	this.$router.push('/')
 		  },
 	  }
 	}
 </script>
-
 <style>
+  .time {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+    font-size: 13px;
+    color: #999;
+	
+  }
+  .button {
+    padding: 0;
+    float: right;
+	padding-right: 10px;
+  }
+
+  .image {
+    width: 210px;
+	height: 180px;
+    display: block;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+      display: table;
+      content: "";
+  }
+  
+  .clearfix:after {
+      clear: both
+  }
+</style>
+<!-- <style>
+	.member-info p{
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
 	.single-member{
 	  width: 280px; 
 	  float: left; 
@@ -138,12 +220,13 @@
 	  margin-bottom: 10px;
 	}
 	.social-touch a{
+	  cursor: pointer;
 	  display: inline-block; 
 	  width: 27px; 
 	  height: 26px; 
 	  vertical-align: middle; 
 	  margin: 0 2px; 
-	  background-image: url(../../assets/home/2.png);
+	  background-color: #FFFFFF;
 	  /* background-image: url(images/social-icons.png); */
 	  background-repeat: no-repeat; 
 	  opacity: 0.7; 
@@ -219,3 +302,4 @@
 	  transition: 0.4s;
 	}
 </style>
+ -->

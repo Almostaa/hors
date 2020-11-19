@@ -3,10 +3,13 @@
 		<div id="top" class="top">
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
-		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+		     <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
 		         <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
 		         <a @click="register()" style="cursor:pointer">注册</a>
-		      </p>
+		     </p>
+		     <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+		     	<button @click="logout" type="button">退出登录</button>
+		     </p>
 		  </div>
 		</div>
 		<div id="header" class="header">
@@ -59,7 +62,7 @@
 					<div>
 						<li v-for="i in selectlist">
 							<a href="">{{i.content}}</a>
-							<span>{{i.createtime | formatTimeToStr}}</span>
+							<span>{{i.createtime}}</span>
 						</li>
 					</div>
 				</div>
@@ -115,17 +118,12 @@
 
 <script>
 	
-	import {formatTimeToStr} from "../../config/date"; 
 	import {newsById , selectList} from "../../api/rotation.js"
 	import { serverApiUrl } from "../../config/apiUrl" 
 	import { infortypelist,inforlist} from "../../api/infor.js" 
 	import MyList from "../../components/MyList.vue"
+	import {getToken,getUserInfo} from "../../utils/common.js"
 	export default {
-		filters:{
-		    formatTimeToStr:function(time){
-				return formatTimeToStr(time);
-		    },
-		 },
 	  data() {
 	    return {
 			categoryList:[],// 分类列表
@@ -133,7 +131,7 @@
 			product: "", // 资讯列表
 			
 			total: null, // 总量
-			pageSize: 1, // 每页显示的数量
+			pageSize: 3, // 每页显示的数量
 			pageNo: 1, //当前页码
 			activeName: "-1", // 分类列表当前选中的id
 			
@@ -142,9 +140,15 @@
 			newsid3:{},
 			selectlist:[],
 			serviceImgURl: serverApiUrl+'/images/news/',
+			
+			usernumber:'',
+			token:null,
 	    };
 	  },
 	  created() {
+		  
+		this.token =getToken()
+		this.usernumber=getUserInfo().phoneNumber
 		
 		// 获取分类列表
 		this.getCategory();
@@ -190,7 +194,6 @@
 		  // 页码变化调用currentChange方法
 		  currentChange(v) {
 				this.pageNo = v;
-				console.log(this.pageNo+"传值")
 				//根据新的页面选取分页数据
 				this.getData();
 		  },
@@ -227,6 +230,10 @@
 		  problem(){
 			  this.$router.push('/problem')
 		  },
+		  logout() {
+		  	localStorage.clear();
+		  	this.$router.push('/')
+		  },
 		  home(){
 		  		  this.$router.push('/')
 		  }, 
@@ -260,7 +267,13 @@
 			  		this.selectlist=r;
 			  	})
 			  	.catch(()=>{})
-		  }
+		  },
+		  login(){
+		     this.$router.push("/login")
+		  },
+		  register(){
+		  	this.$router.push("/register")
+		  },
 	  },
 	  components:{MyList}
 	}

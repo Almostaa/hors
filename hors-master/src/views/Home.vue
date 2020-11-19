@@ -4,10 +4,13 @@
 		<div id="top" class="top">
           <div class="wrap">
               <p class="call">888-888/888888电话预约</p>
-              <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+              <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
                   <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
                   <a @click="register()" style="cursor:pointer">注册</a>
               </p>
+			  <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+				<button @click="logout" type="button">退出登录</button>
+			  </p>
           </div>
 		</div>
 		<div id="header" class="header">
@@ -68,6 +71,16 @@
 		        <div class="caption"><span class="text">快速预约</span></div>
 		        <div class="form">
 		            <div class="line">
+						<!-- <el-autocomplete popper-class="my-autocomplete" v-model="rooms.roomsno" 
+						:fetch-suggestions="querySearch" placeholder="请输入科室名称(选填)" 
+							
+						@select="handleSelect">
+							<template slot-scope="{ item }">
+								<div>
+									<span>{{ item.roomname }}</span>
+								</div>
+							　 </template> 
+						</el-autocomplete> -->
 						<select v-model="rooms.roomno" placeholder="选择室" @change="changeFenqiRate(rooms.roomno)">
 						    <option
 						      v-for="item in rooms"
@@ -89,7 +102,15 @@
 					</div>
 		        </div>
 		        <div class="submit">
-		            <el-button class="button" @click="fast(options.dno)">快速查询</el-button>
+					<router-link :to="{path:'/fast', query:{id:options.dno}}">
+						<el-button style="color:#fff;
+							font-size: 14px;
+							height:32px;
+							width:108px;
+							border: #ffffff;
+							border-radius: 3px;
+							background-color: #febd09;">快速查询</el-button>
+					</router-link>
 		        </div>
 		    </div>
 			<div class="banner-help">
@@ -122,55 +143,66 @@
 	import {sectionlist ,roomList ,roomListById} from "../api/section.js"
 	import {getDoctorList} from "../api/doctor.js"
 	import {rotationlist} from "../api/rotation.js"
+	import {getToken,getUserInfo} from "../utils/common.js"
 	export default {
 	  name: 'Home',
 	  data() {
 		return {
+			usernumber:'',
+			token:null,
 			carouselList:[],//轮播图
 			currentIndex: 1,   //默认显示图片
 			timer: null ,   //定时器
-			value:'',
 			offices:[],
 			rooms:[],
-			roombyid:[],
 			options: [],
+			keshiname: '',
+			yishengname: '',
 			showEditDialog: false,
 			num:'',
 			serviceImgURl: serverApiUrl+'/images/home/',
 		};
 	  },
 	  created() {
-		  /* 获取大类*/
-	  	sectionlist()
-	  		.then(m =>{
-	  			this.offices = m
-	  		})
-	  		.catch(() => {}); 
-		/* 获取科室 */
-		roomList()
-			.then(r=>{
-				this.rooms=r;
-			})
-			.catch(()=>{})
+		this.getlist();
 	
-		/* 获取轮播图图片 */
-		rotationlist()
-			.then(p=>{
-				console.log(p)
-				this.carouselList=p;
-			})
-			.catch(()=>{})
-		
+		this.token = getToken()
+		this.usernumber=getUserInfo().phoneNumber
+		//console.log(localStorage.getItem("USER_INFO"))
+		// console.log(this.usernumber)
+		// console.log(this.usernumber.userNo+'jjj')
 	  },
 	  mounted() {
 		  //定时器
-	  	this.timer = setInterval(() => {this.gotoPage(this.nextIndex)}, 2000)
+	  	this.timer = setInterval(() => {this.gotoPage(this.nextIndex)}, 2000);
+		/* this.rooms = this.loadAll(); */
 	  },
 	  methods: {
+
+		/* querySearch(queryString, cb) {
+		      var rooms = this.rooms;
+		      var results = queryString ? rooms.filter(this.createFilter(queryString)) : rooms;
+		      // 调用 callback 返回建议列表的数据
+		      cb(results);
+		},
+		createFilter(queryString) {
+		      return (restaurant) => {
+		        return (restaurant.roomname.toLowerCase().indexOf(queryString.toLowerCase()) > -1);
+		      };
+		},
+		
+		loadAll() {
+		    // 获取科室 
+		    roomList()
+		    	.then(r=>{
+		    		this.rooms=r;
+		    	})
+		    	.catch(()=>{})
+		}, */
 		
 		// 将科室编号传值
 		changeFenqiRate(id){
-			  console.log(id+'aaa')
+			  //console.log(id+'aaa')
 			  this.num=id
 			  /* 根据科室编号获取科室下的医生 */
 			  getDoctorList({id:this.num})
@@ -187,6 +219,34 @@
 	    gotoPage(index) {
 	      this.currentIndex = index;
 	    },
+		//从后端传参
+		getlist(){
+			/* 获取大类*/
+			sectionlist()
+				.then(m =>{
+					this.offices = m
+				})
+				.catch(() => {}); 
+				
+			/* 获取轮播图图片*/
+			rotationlist()
+				.then(p=>{
+					//console.log(p)
+					this.carouselList=p;
+				})
+				.catch(()=>{})
+			roomList()
+				.then(r=>{
+					this.rooms=r;
+				})
+				.catch(()=>{})
+		},
+		//实现退出系统返回到登录页
+		logout() {
+			localStorage.clear();
+			this.token=null
+			this.$router.push('/')
+		},
 		about(){
 			this.$router.push("/about")
 		},
@@ -208,18 +268,20 @@
 		register(){
 			this.$router.push("/register")
 		},
-		fast(id){
+		/* fast(id){
 			this.$router.push({
 				name:'fast',
 				params:{
 					id:id
 				}
 			})
-		},
+		}, */
 		depdoctor(id){
 			this.$router.push("/depdoctor")
 		},
-	    
+	    handleSelect(item) {
+		    console.log(item);
+		}
 	  },
 	  computed: {
 		  

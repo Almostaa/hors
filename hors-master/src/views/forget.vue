@@ -2,26 +2,25 @@
 	  <div class="poster">
 		<el-form class="register-container" label-position="left" label-width="0px" ref="registerForm" :model="registerForm" :rules='rules'>
 		  <h3 class="register_title">重置密码</h3>
-		  <el-form-item  prop="phone">
+		  <el-form-item  prop="phoneNumber">
 		      <el-input size="medium" v-model="registerForm.phone" placeholder="联系电话"></el-input>
 		  </el-form-item>
-		  <el-form-item prop="smscode">
+		  <el-form-item prop="code">
 		  		<el-input v-model="registerForm.smscode" 
 				 style="width: 55%;" size="medium"
 				 placeholder="验证码"></el-input>
 				<el-button style="float: right;width: 40%;border: 0;margin-top: 3px;"  size="medium"
-				 @click="setsmCode()" :disabled="isDisabled">{{buttonText}}</el-button>
+				 @click="sendCode()" :disabled="isDisabled">{{buttonText}}</el-button>
 		  </el-form-item>
-		  <el-form-item prop="password">
+		  <el-form-item prop="newPossWd">
 			<el-input type="password" size="medium" v-model="registerForm.password"  placeholder="输入新密码" show-password></el-input>
 		  </el-form-item>
-		  <el-form-item prop="supassword">
+		  <el-form-item prop="comfirmPassWd">
 		  			<el-input type="password" size="medium" v-model="registerForm.supassword"  placeholder="确认密码" show-password></el-input>
 		  </el-form-item>
 		  <el-form-item >
 		      <el-button size="medium" type="primary" 
 			  style="width: 100%;border: none;color: #000000;"
-			   :disabled="!(registerForm.name && registerForm.password && registerForm.phone && registerForm.supassword )"
 			   @click="submit('registerForm')">确认提交</el-button>
 		  </el-form-item>
 			
@@ -31,7 +30,7 @@
  
  
 <script>
-	
+	import { smsStudent,forget } from "../api/user.js"
     export default {
         name: "register",
         data() {
@@ -75,14 +74,11 @@
 			    }
 			};
             return {
-				vedioCanPlay: false,
-				fixStyle: '',
-				PATH_TO_MP4: '',
                 registerForm: {
-                    phone: '',
-					smscode:'',
-                    password: '',
-					supassword:'',
+                    phone: '', //电话
+					smscode:'',//验证码
+                    password: '',//密码
+					supassword:'',//确认密码
                 },
 				rules:{
 					phone: [
@@ -96,20 +92,17 @@
 				},
 				buttonText: '发送验证码',
 				isDisabled: false, // 是否禁止点击发送验证码按钮
+				flag:true,
             }
         },
 		
         methods: {
 			sendCode () {
-				yz({
+				smsStudent({
 						phone:this.registerForm.phone,
 					})
 				.then(r=>{
 					console.log(r)
-					this.$message({
-					  type: "success",
-					  message: r.msg
-					});
 					let time = 60
 					this.buttonText = '已发送'
 					this.isDisabled = true
@@ -133,20 +126,19 @@
 			submit(formName) {
 			  this.$refs[formName].validate(valid => {
 			    if (valid) {
-					zc({
-						supassword:this.registerForm.supassword,
-						password:this.registerForm.password,
-						phone:this.registerForm.phone,
-						yzm:this.registerForm.smscode
-					}
-					)
+					forget({
+						comfirmPassWd:this.registerForm.supassword,
+						newPossWd:this.registerForm.password,
+						phoneNumber:this.registerForm.phone,
+						code:this.registerForm.smscode
+					})
 					.then(r => {
 					  console.log(r);
 					  this.$message({
-					    type: "success",
+					    type: r.status,
 					    message: r.msg
 					  });
-					  if(r.msg === '重置成功'){
+					  if(r.msg === '操作成功！!'){
 					  	this.handleLogin()
 					  }
 					})

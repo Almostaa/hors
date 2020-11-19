@@ -3,9 +3,12 @@
 		<div id="top" class="top">
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
-		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+		      <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
 		          <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
 		          <a @click="register()" style="cursor:pointer">注册</a>
+		      </p>
+		      <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+		      		<button @click="logout" type="button">退出登录</button>
 		      </p>
 		  </div>
 		</div>
@@ -62,12 +65,19 @@
 
 <script>
 
+import {getToken,getUserInfo} from "../../utils/common.js"
   export default {
     data() {
       return {
 		userName:'login',
+		usernumber:'',
+		token:null,
       };
     },
+	created() {
+		this.token = getToken()
+		this.usernumber=getUserInfo().phoneNumber
+	},
     methods: {
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
@@ -83,6 +93,10 @@
 	  },
 	  user(){
 		  this.$router.push("/user")
+	  },
+	  logout() {
+	  	localStorage.clear();
+	  	this.$router.push('/')
 	  },
     }
   }

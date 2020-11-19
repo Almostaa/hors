@@ -7,38 +7,39 @@
 	  :show-close="false"
 	  :close-on-click-modal="false"
 	>
-	 <el-form :model="forms" :rules="rules"  ref="editForms" class="edit-forms" label-position="left" :label-width="labelWidth">
-	   <el-form-item label="姓名:" prop="name" required>
-	     <el-input v-model="forms.name"></el-input>
+	 <el-form :disabled="val" :model="forms" :rules="rules"  ref="editForms" class="edit-forms" label-position="left" :label-width="labelWidth">
+	   <el-form-item label="姓名:" prop="userName" required>
+	     <el-input  v-model="forms.userName"></el-input>
 	   </el-form-item>
-	 		  <el-form-item label="性别:" prop="typeid" required>
-	 			<el-input v-model="forms.sex"></el-input>
-	 		  </el-form-item> 
-	   <el-form-item label="手机号:" prop="price" required>
-	     <el-input v-model="forms.price" disabled></el-input>
+	 	<el-form-item label="性别:" prop="sex" required>
+	 	  <el-input v-model="forms.sex"></el-input>
+	 	</el-form-item> 
+	   <el-form-item label="手机号:" prop="phoneNumber" required>
+	     <el-input  v-model="forms.phoneNumber" disabled></el-input>
 	   </el-form-item>
-	   <el-form-item label="身份证号:" prop="goodsdesc" required>
-	     <el-input v-model="forms.goodsdesc"></el-input>
+	   <el-form-item label="身份证号:" prop="idCardNumber" required>
+	     <el-input v-model="forms.idCardNumber"></el-input>
 	   </el-form-item>
-	 		<el-form-item label="社保卡号:" prop="url" required>
-	 		  <el-input v-model="forms.url"></el-input>
+	 		<el-form-item label="社保卡号:" prop="socialCard" required>
+	 		  <el-input v-model="forms.socialCard"></el-input>
 	 		</el-form-item>
 	 </el-form>
 	  <div slot="footer" class="dialog-footer">
 	    <el-button @click="$emit('close')">取 消</el-button>
-	    <el-button type="primary" 
-		 
-		 @click="submit">确认</el-button><!-- :disabled="(registerForm.name && registerForm.password && registerForm.phone )" -->
+		<el-button type="primary" :disabled="val" @click="submit">确认</el-button>
 	  </div>
 	</el-dialog>
 </template>
 
 <script>
+	import {queryUserInfo} from "../../api/user.js"
+	import {forget } from "../../api/user.js"
+	import {getUserInfo} from "../../utils/common.js"
 	export default {
 		props: {
 		  title: {
 		    type: String,
-		    default: "请填写本人真实信息",
+		    default: "完善身份信息，请填写本人真实信息",
 		  },
 		  dialogWidth: {
 		    type: String,
@@ -60,21 +61,28 @@
 			        callback();
 			    }
 			};
+			var ck=function(rule, value, callback){
+				if(!/^[男女]$/.test(value)){
+					callback(new Error("必须输入男或女"));
+				}
+				callback();
+			}
 			
 			return {
-				val:[],
-						forms: {
-				  name: "",
-				  typeid: "",
-				  price: "",
-				  goodsdesc: "",
-				  url: "",
+				val:false,
+				forms: {
+				  userName: "",
+				  sex: "",
+				  phoneNumber: "",
+				  idCardNumber: "",
+				  socialCard: "",
 				},
-				fileList: [],
-				
 				rules:{
-					goodsdesc: [
+					idCardNumber: [
 					    {validator: validatePass, trigger: 'blur' }
+					],
+					sex: [
+					    {validator: ck, trigger: 'blur' }
 					],
 				}
 			};
@@ -83,19 +91,14 @@
 		submit() {
 		  this.$refs.editForms.validate(valid => {
 		    if (valid) {
-		      this.$message({
-		        message: "字段验证通过，提交请求，成功后刷新分页！",
-		        type: "success"
-		      });
-		   /*   this.$emit("success"); //通知列表分页刷新 */
-		     savegoods(this.forms)
+		     forget(this.forms)
 		         .then(r => {
 		           this.$message({
 		             message: r.msg,
-		             type: "success"
+		             type: r.status
 		           });
-		           //this.$emit("success");
-				   this.$parent.refresh();
+				   this.$parent.selectuser();
+				   this.openDialog()
 				   this.$parent.showEditDialog = false;
 		         })
 		        .catch(() => {});
@@ -109,6 +112,16 @@
 		  });
 		},
 	    openDialog() {
+			
+			queryUserInfo({
+				userNo:getUserInfo().userNo
+			}).then(r=>{
+				this.forms=r;
+				if(this.forms.idCardNumber!= null ){
+					this.val=true
+				}
+				console.log(this.forms.idCardNumber+'lll')
+			}).catch(r=>{})
 	    	
 	    },
 	  },

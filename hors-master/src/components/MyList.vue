@@ -1,13 +1,13 @@
 <template>
   <div>
-	  <div class="iii" v-for="i in list" :key="i.informationtypeno">
-		<router-link :to="{ path: '/news/details', query: {pno:i.pno} }">
-	  			<div class="img">
+	  <div class="ooo" v-for="i in list">
+		<router-link :to="{ path: '/newsdetails', query: {id:i.pno} }">
+	  			<div class="imgqq">
 	  				<img :src="serviceImgURl+i.picture" />
 	  			</div>
 	  			<div class="lll">
 	  				<h4>{{i.title}}</h4>
-					<span style="text-indent: 2em;font-size: 14px;">作者：{{i.author}}   创建时间：{{i.createtime | formatTimeToStr}}</span>
+					<span style="text-indent: 2em;font-size: 14px;">作者：{{i.author}}   创建时间：{{i.createtime}}</span>
 	  				<p style="text-indent: 2em;">{{i.content}}</p>
 	  			</div>
 		</router-link>
@@ -15,20 +15,14 @@
   </div>
 </template>
 <script>
-	import { serverApiUrl } from "../config/apiUrl"
-	import {formatTimeToStr} from "../config/date"; 
+	import { serverApiUrl } from "../config/apiUrl" 
 export default {
-	filters:{
-		    formatTimeToStr:function(time){
-				return formatTimeToStr(time);
-		    },
-		 },
   name: "MyList",
   // list为父组件传过来的商品列表
   props: ["list"],
   data() {
     return {
-		serviceImgURl: serverApiUrl+'/images/news/',
+		serviceImgURl: serverApiUrl+'/images/information/',
 	};
   },
   methods: {
@@ -38,22 +32,23 @@ export default {
 
 <style>
 
-	.iii{
+	.ooo{
 		width: 1100px;
 		height: 190px;
+		margin-bottom: 10px;
 		/* margin-left: 200px; */
 		border: solid 1px gray;
 		overflow: hidden;
 	}
-	.img{
+	.imgqq{
 		width: 300px;
 		float: left;
 	}
-	.img img{
+	.imgqq img{
 		display: block;
 		width: 100%;
 	}
-	.img img:hover{
+	.imgqq img:hover{
 		transform: scale(1.2);
 	}
 	.lll{

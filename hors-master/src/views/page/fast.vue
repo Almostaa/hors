@@ -3,10 +3,13 @@
 		<div id="top" class="top">
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
-		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
-		          <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
-		          <a @click="register()" style="cursor:pointer">注册</a>
-		      </p>
+		     <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+		         <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
+		         <a @click="register()" style="cursor:pointer">注册</a>
+		     </p>
+		     <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+		     	<button @click="logout" type="button">退出登录</button>
+		     </p>
 		  </div>
 		</div>
 		<div id="header" class="header">
@@ -29,24 +32,27 @@
 			<!-- 医生信息 -->
 			<div class="iii">
 				<div class="img">
-					<img :src="serviceImgURl+douser.picture" />
+					<img v-if="douser.doctor && douser.doctor.picture" :src="serviceImgURl+douser.doctor.picture" />
 				</div>
 				<div class="lll">
-					<h4>{{douser.dname}}</h4>
-					<span style="font-size: 10px;">{{douser.rank}}</span>
+					<h4 v-if="douser.doctor && douser.doctor.dname">{{douser.doctor.dname}}</h4>
+					<span style="font-size: 10px;" v-if="douser.doctor && douser.doctor.rank">{{douser.doctor.rank}}</span>
 					<p style="height: 10px;"></p>
 					<p>简介：</p>
-					<p style="text-indent: 2em;">{{douser.describe}}</p>
+					<p style="text-indent: 2em;" v-if="douser.doctor && douser.doctor.describe">{{douser.doctor.describe}}</p>
+					<el-button type="warning" v-if="douser.chargeType && douser.chargeType.priceTypeName"
+					style="border-radius: 8px;position:fixed;top: 48%;" 
+					>{{douser.chargeType.priceTypeName}} ： {{douser.fee}}￥</el-button>
 				</div>
 			</div>
 			
 			<!-- 预约时间 -->
 			<div>
-			       <table class="altrowstable" id="alternatecolor" style="width: 852px;">
+			       <table class="altrowstable" id="alternatecolor" style="width: 852px;border-collapse: collapse;">
 					 <thead>
 						 <tr>
 							<th scope="row" style="height: 30px;width: 100px;">日期</th>
-						    <th v-for="(item,index) in same_week" :class="[same_day==item.date? 'activ' :'','dis']"   @click="select(item)" :key='index'>
+						    <th v-for="(item,index) in same_week" :class="[same_day==item.date? 'activ' :'','dis']" :key='index'>
 								{{item.name}}
 							</th>
 					   </tr>
@@ -54,23 +60,15 @@
 					<tbody>
 						<tr>
 						    <th scope="row" style="height: 30px;">上午</th>
-						    <td style="text-align: center;"><a>预约</a></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
+						    <td style="text-align: center;"v-for=" (i,o) in up_day">
+								<a class="hoho" @click="order1(o)">{{i}}</a>
+							</td>
 						</tr>
 						<tr>
-						    <th scope="row" style="height: 30px;">下午</th>
-						    <td style="text-align: center;"><a>预约</a></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
+						    <th scope="row" style="height: 30px;" >下午</th>
+						    <td style="text-align: center;" v-for=" (i,o) in dow_day">
+								<a class="hoho" @click="order2(o)">{{i}}</a>
+							</td>
 						</tr>
 					</tbody>
 			       </table>
@@ -88,7 +86,6 @@
 			</div>
 		</div>
 		
-		
 		<div style="height: 70px;width: 100%;position: fixed;bottom: 0;text-align: center;">
 			<br />
 			<p style="font-size:12px;text-align:center;">
@@ -100,79 +97,54 @@
 			</p>
 		</div> 
 		
+		<Edit :showEditDialog="showDialog" @close="showDialog = false" />
+		<Add :showEditDialog="showEditDialog" @close="showEditDialog = false" />
 	</div>
 </template>
 
 <script>
 	
-	import {getDoctorInfor} from "../../api/doctor.js"
+	import {getDoctorInforList ,updateCount, selectRecord} from "../../api/charge.js"
 	import { serverApiUrl } from "../../config/apiUrl" 
+	import Edit from "../../views/page/order.vue"
+	import {queryUserInfo} from "../../api/user.js"
+	import Add from "../../views/page/add.vue"
+	import {getToken,getUserInfo} from "../../utils/common.js"
 	export default {
 	  data() {
 	    return {
+			usernumber:'',
+			token:null,
 			douser:{},
+			serviceImgURl: serverApiUrl+'/images/doctor/',
 			week:[],
 			same_week:[],//保存当前最新的时间
 			same_day:'',//当天的时间
-			serviceImgURl: serverApiUrl+'/images/doctor/',
+			
+			up_day:['','','','','','',''],
+			dow_day:['','','','','','',''],
+			datelist:[],
+			dateoop:[],
+			showDialog:false,
+			showEditDialog:false,
+			p:'',
+			doctorno:'',
+			time:'',
+			forms:[],
 	    };
 	  },
 	  created() {
-		  this.id=this.$route.params.id;
-		  console.log("sss"+this.id)
-		  getDoctorInfor({id:this.id})
-		  .then(n=>{
-		  	console.log(n)
-		  	this.douser=n
-		  	this.$parent.id=null;
-		  })
-		  .catch(()=>{})
 		  
-		  
-	      // 默认显示当天前一周的数据
-	      let data=[]
-	      this.start=this.getDay(+7);
-	      this.end=this.getDay();
-	      for(let i=6;i>=0;i--){
-	        data.push(this.getDay(+i))
-	      }
-	     var date=data.reverse()//得出一周的日期进行排序
-	     this.week=date;
-	     var date=this.week;
-	     var pkc=[];/* 用于存储展示的日期数据 */
-	     var weekday=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-	     date.forEach((item,index)=>{//循坏日期
-	        var f=new Date(item);
-	        var week=f.getDay()//计算出星期几
-	      var str1=item.split('/');
-	      var strs=str1[1]+'/'+str1[2];
-	  
-	        var weeks=weekday[week]/* 将计算出来的时间带入数字得出中文 */
-	        var time= Math.round(new Date(item) / 1000)//时间戳转换
-	        var s={}//用于存储每个日期对象
-	        s.date=item;
-	        s.name=strs;
-	        s.week=weeks;
-	        s.times=time;
-	        pkc.push(s)
-	     })
-	     this.same_week=pkc;
-	     //pkc存储着今天的年月日星期几，时间戳等
-	      this.same_day=pkc[0].date;//今天的数据
+		  this.token = getToken()
+		  this.usernumber=getUserInfo().phoneNumber
+		  this.doctorno=this.$route.query.id
+		  this.doctorinfor()
+	      this.nowdate()
+		  this.useropp()
 	    },
 	  methods: {
 		
-		getDay(day){
-		     　　var today = new Date();
-		     　　var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
-		     　　today.setTime(targetday_milliseconds); //注意，这行是关键代码
-		     　　var tYear = today.getFullYear();
-		     　　var tMonth = today.getMonth();
-		     　　var tDate = today.getDate();
-		     　　tMonth = this.doHandleMonth(tMonth + 1);
-		     　　tDate =  this.doHandleMonth(tDate);
-		     　　return tYear+"/"+tMonth+"/"+tDate;
-		 },
+		
 		 doHandleMonth(month){
 		     var m = month;
 		     if(month.toString().length == 1){
@@ -180,9 +152,175 @@
 		     }
 		     return m;　
 		 },
-	    handleSelect(key, keyPath) {
-	      console.log(key, keyPath);
-	    },
+		 nowdate(){
+			 // 默认显示当天前一周的数据
+			  let data=[]
+			  this.start=this.getDay(+7);
+			  this.end=this.getDay();
+			  for(let i=6;i>=0;i--){
+			    data.push(this.getDay(+i))
+			  }
+			 var date=data.reverse()//得出一周的日期进行排序
+			 this.week=date;
+			 var date=this.week;
+			 var pkc=[];/* 用于存储展示的日期数据 */
+			 var weekday=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+			 date.forEach((item,index)=>{//循坏日期
+			    var f=new Date(item);
+			    var week=f.getDay()//计算出星期几
+			  var str1=item.split('-');
+			  var strs=str1[1]+'/'+str1[2];
+			 	  
+			    var weeks=weekday[week]/* 将计算出来的时间带入数字得出中文 */
+			    var time= Math.round(new Date(item) / 1000)//时间戳转换
+			    var s={}//用于存储每个日期对象
+			    s.date=item;
+			    s.name=strs;
+			    s.week=weeks;
+			    s.times=time;
+			    pkc.push(s)
+			 })
+			 this.same_week=pkc;
+			 //pkc存储着今天的年月日星期几，时间戳等
+			  this.same_day=pkc[0].date;//今天的数据
+		 },
+		 doctorinfor(){
+			 getDoctorInforList({id:this.$route.query.id})
+				 .then(n=>{
+					console.log(n)
+					this.douser=n
+					this.$route.query.id=null;
+				 })
+				 .catch(()=>{})
+			 
+			selectRecord({id:this.$route.query.id})
+			 .then(r=>{
+
+			 	this.datelist=r;
+			
+				for(var i= 0;i<this.datelist.length;i++ ){
+					
+						if(this.datelist[i].date == this.same_week[0].date){
+							this.$set(this.dateoop , 0 , this.same_week[0].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 0 , '预约') 
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 0 , '预约') 
+							}else{
+								this.$set(this.up_day , 0 , ' ') 
+								this.$set(this.dow_day , 0 , ' ')
+							}
+						}else if(this.datelist[i].date == this.same_week[1].date){
+							this.$set(this.dateoop , 1 , this.same_week[1].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 1 , '预约') 
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 1 , '预约') 
+							}else{
+								this.$set(this.up_day , 1 , ' ')
+								this.$set(this.dow_day , 1 , ' ') 
+							}
+						}else if(this.datelist[i].date == this.same_week[2].date){
+							this.$set(this.dateoop , 2 , this.same_week[2].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 2 , '预约')
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 2 , '预约') 
+							}else{
+								this.$set(this.up_day , 2 , ' ')
+								this.$set(this.dow_day , 2 , ' ') 
+							}
+						}else if(this.datelist[i].date == this.same_week[3].date){
+							this.$set(this.dateoop , 3 , this.same_week[3].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 3 , '预约')
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 3 , '预约')
+							}else{
+								this.$set(this.up_day , 3 , ' ')
+								this.$set(this.dow_day , 3 , ' ') 
+							}
+						}else if(this.datelist[i].date == this.same_week[4].date){
+							this.$set(this.dateoop , 4 , this.same_week[4].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 4 , '预约')
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 4 , '预约') 
+							}else{
+								this.$set(this.up_day , 4 , ' ')
+								this.$set(this.dow_day , 4 , ' ') 
+							}
+						}else if(this.datelist[i].date == this.same_week[5].date){
+							this.$set(this.dateoop , 5 , this.same_week[5].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 5 , '预约')
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 5 , '预约')
+							}else{
+								this.$set(this.up_day , 5 , ' ')
+								this.$set(this.dow_day , 5 , ' ')
+							}
+						}else if(this.datelist[i].date == this.same_week[6].date){
+							this.$set(this.dateoop , 6 , this.same_week[6].date) 
+							if(this.datelist[i].time == '上午'){
+								this.$set(this.up_day , 6 , '预约')
+							}else if(this.datelist[i].time == '下午'){
+								this.$set(this.dow_day , 6, '预约')
+							}else{
+								this.$set(this.up_day , 6 , 'll')
+								this.$set(this.dow_day , 6 , ' ')
+							}
+						} 
+				}
+			 	this.$route.query.id=null;
+			 })
+			 .catch(()=>{})
+		 },
+		 /* updateCount(){
+			 updateCount({id:this.$route.query.id})
+			 .then(n=>{
+			 	console.log(n)
+				
+			 	this.$route.query.id=null;
+			 })
+			 .catch(()=>{})
+		 }, */
+		getDay(day){
+		 	var today = new Date();
+		 	var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
+		 	today.setTime(targetday_milliseconds); //注意，这行是关键代码
+		 	var tYear = today.getFullYear();
+		 	var tMonth = today.getMonth();
+		 	var tDate = today.getDate();
+		 	tMonth = this.doHandleMonth(tMonth + 1);
+		 	tDate =  this.doHandleMonth(tDate);
+		 	return tYear+"-"+tMonth+"-"+tDate;
+		},
+		useropp(){
+			queryUserInfo({
+				userNo:getUserInfo().userNo
+			}).then(r=>{
+				this.forms=r;
+			}).catch(r=>{})
+		},
+		 order1(o){
+			 if(this.forms.userName == '' || getUserInfo().userName == null){
+			 	this.showEditDialog = true
+			 }else{
+				this.p = o
+				this.time = '上午'
+				this.showDialog = true
+			}
+		 },
+		 order2(o){
+		 			 if(this.forms.userName == '' || getUserInfo().userName == null){
+		 			 	this.showEditDialog = true
+		 			 }else{
+		 				this.p = o
+						this.time = '下午'
+		 				this.showDialog = true
+		 			}
+		 },
 		  problem(){
 			  this.$router.push('/problem')
 		  },
@@ -199,9 +337,14 @@
 		     this.$router.push("/login")
 		  },
 		  register(){
-		  	this.$router.push("/register")
+				this.$router.push("/register")
 		  },
-	  }
+		  logout() {
+				localStorage.clear();
+				this.$router.push('/')
+		  },
+	  },
+	  components:{Edit,Add}
 	}
 </script>
 
@@ -272,5 +415,11 @@
 	}
 	.evenrowcolor{
 	    background-color:#c3dde0;
+	}
+	.hoho{
+		cursor: pointer;
+	}
+	.hoho:hover{
+		color: #0055FF;
 	}
 </style>

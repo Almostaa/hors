@@ -3,9 +3,12 @@
 		<div id="top" class="top">
 		  <div class="wrap">
 		      <p class="call">888-888/888888电话预约</p>
-		      <p class="welcome">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
-		         <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
-		         <a @click="register()" style="cursor:pointer">注册</a>
+		      <p class="welcome" v-if="token == null">欢迎来到多吃黑芝麻健康服务平台&nbsp;请&nbsp;&nbsp;
+		          <a @click="login()" style="cursor:pointer">登录</a>&nbsp;|
+		          <a @click="register()" style="cursor:pointer">注册</a>
+		      </p>
+		      <p class="welcome" v-else >欢迎来到多吃黑芝麻健康服务平台:{{usernumber}}
+		      		<button @click="logout" type="button">退出登录</button>
 		      </p>
 		  </div>
 		</div>
@@ -39,19 +42,19 @@
 			    <el-tab-pane label="账号管理">
 					<div :data="people">
 						<li style="font-size: 20px;margin: 10px;">
-							姓名：{{people.username | name}}
+							姓名：{{people.userName | name}}
 						</li>
 						<li style="font-size: 20px;margin: 10px;">
 							性别：{{people.sex}}
 						</li>
 						<li style="font-size: 20px;margin: 10px;">
-							手机号：{{people.phone | phone}}
+							手机号：{{people.phoneNumber | phone}}
 						</li>
 						<li style="font-size: 20px;margin: 10px;">
-							身份证号：{{people.idcard | idcard}}
+							身份证号：{{people.idCardNumber | idcard}}
 						</li>
 						<li style="font-size: 20px;margin: 10px;">
-							社保卡号：{{people.socialcard | idcard}}
+							社保卡号：{{people.socialCard | idcard}}
 						</li><br />
 						<button type="button" style="margin: 30px;color: #0000FF;height: 30px;"
 							@click="forget()"
@@ -63,59 +66,88 @@
 				</el-tab-pane>
 			    <el-tab-pane label="我的预约">
 					<el-table
-					    :data="tableData"
+					    :data="apptInfoData"
 					    stripe
 					    style="width: 100%">
 					    <el-table-column
-					      prop="date"
-					      label="订单编号"
-					      width="180">
+					      prop="apptNo"
+					      label="编号"
+					      width="80">					      
 					    </el-table-column>
 					    <el-table-column
-					      prop="name"
-					      label="挂号人姓名"
-					      width="180">
+					      prop="roomName"
+					      label="科室"
+					      width="100">					      
 					    </el-table-column>
 					    <el-table-column
-					      prop="address"
-					      label="医生姓名">
+					      prop="userName"
+					      label="挂号人"
+					      width="80">
+					    </el-table-column>
+					    <el-table-column
+					      prop="sex"
+					      label="性别">
+					    </el-table-column>
+					    <el-table-column
+					      prop="age"
+					      label="年龄">
+					    </el-table-column>
+					    <el-table-column
+					      prop="dName"
+					      label="医生">
 					    </el-table-column>
 						<el-table-column
-						  prop="address"
-						  label="创建时间">
+						  prop="apptDate"
+						  label="预约日期">
 						</el-table-column>
 						<el-table-column
-						  prop="address"
-						  label="关闭时间">
+						  prop="apptTime"
+						  label="预约时间">
+						</el-table-column>
+						<el-table-column
+						  prop="state"
+						  label="支付状态">
+						</el-table-column>
+						<el-table-column
+						  prop="price"
+						  label="挂号费">
 						</el-table-column>
 					  </el-table>
 				</el-tab-pane>
 			    <el-tab-pane label="门诊记录">
 					<el-table
-					    :data="tableData"
+					    :data="consultInfoData"
 					    stripe
 					    style="width: 100%">
 					    <el-table-column
-					      prop="date"
-					      label="问诊号"
-					      width="180">
+					      prop="consultNo"
+					      label="编号"
+					      width="100">
 					    </el-table-column>
 					    <el-table-column
-					      prop="name"
-					      label="挂号人姓名"
-					      width="180">
+					      prop="userName"
+					      label="问诊人"
+					      width="100">
 					    </el-table-column>
 					    <el-table-column
-					      prop="address"
-					      label="医生姓名">
+					      prop="dname"
+					      label="医生">
 					    </el-table-column>
 						<el-table-column
-						  prop="address"
-						  label="创建时间">
+						  prop="startTime"
+						  label="开始时间">
 						</el-table-column>
 						<el-table-column
-						  prop="address"
-						  label="关闭时间">
+						  prop="endTime"
+						  label="结束时间">
+						</el-table-column>
+						<el-table-column
+						  prop="state"
+						  label="支付状态">
+						</el-table-column>
+						<el-table-column
+						  prop="price"
+						  label="问诊费">
 						</el-table-column>
 					  </el-table>
 				</el-tab-pane>
@@ -139,30 +171,56 @@
 
 <script>
 	import Edit from "../page/add.vue";
+	import {queryUserInfo,apptInfoList,consultInfoList} from "../../api/user.js"
+	import {getToken,getUserInfo} from "../../utils/common.js"
 	export default {
 	  data() {
 	    return {
 			tabPosition: 'left',
-			people:{
-				id:1,
-				username:'冯大大',
-				sex:'女',
-				phone:'15252525252',
-				idcard:'124565321236541236',
-				socialcard:'555555555555555'
-			},
-			tableData: [{
-			    date: '2016-05-02',
-			    name: '王小虎',
-			    address: '上海市普陀区金沙江路 1518 弄'
-			}],
-			 showEditDialog: false,
+			usernumber:'',
+			token:null,
+			people:{},
+			apptInfoData:[],
+			consultInfoData:[],
+			showEditDialog: false,
 	    };
 	  },
+	  created() {
+	  	this.token = getToken()
+	  	this.usernumber=getUserInfo().phoneNumber		
+		this.selectuser();
+		
+		apptInfoList({usno:1})
+      		.then(r => {
+        		this.apptInfoData = r.map(k=>{
+           		 k.apptInfoData = {}
+            	 return k;
+           		});
+        	
+      		})
+      .catch(() => {});
+      
+      consultInfoList({usno:1})
+      		.then(r => {
+        		this.consultInfoData = r.map(k=>{
+           		 k.consultInfoData = {}
+            	 return k;
+           	});       	
+      		})
+      .catch(() => {});
+	  },
 	  methods: {
-	    handleSelect(key, keyPath) {
-	      console.log(key, keyPath);
-	    },
+		  
+		selectuser(){
+			//console.log(this.userno+'ppp')
+			queryUserInfo({
+				userNo:getUserInfo().userNo
+			}).then(r=>{
+				this.people=r;
+				//console.log(this.people)
+			}).catch(r=>{})
+			
+		},
 		  problem(){
 			  this.$router.push('/problem')
 		  },
@@ -183,6 +241,10 @@
 		  },
 		  register(){
 		  	this.$router.push("/register")
+		  },
+		  logout() {
+		  	localStorage.clear();
+		  	this.$router.push('/')
 		  },
 	  },
 	  components: { Edit }

@@ -79,6 +79,22 @@ const routes = [
       return import('../views/page/depdoctor.vue')
     }
   },
+  
+  {
+    path: '/details',
+    name: 'details',
+    component: function () {
+      return import('../views/page/details.vue')
+    }
+  },
+  
+  {
+    path: '/order',
+    name: 'order',
+    component: function () {
+      return import('../views/page/order.vue')
+    }
+  },
  
   
 ]

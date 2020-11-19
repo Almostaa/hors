@@ -126,10 +126,10 @@
 							.then(r => {
 							  console.log(r);
 							  this.$message({
-							    type: "success",
+							    type: r.status,
 							    message: r.msg
 							  });
-							  if(r.msg === '注册成功'){
+							  if(r.msg === '注册成功!'){
 							  	this.handleLogin()
 							  }
 							})
@@ -140,12 +140,12 @@
 				  }
 				})
 			},	
-            handleLogin() {
-                this.$router.push('/login')
-            },
 			home(){
 			 	this.$router.push('/')
 			 },
+			handleLogin(){
+				this.$router.push('/login')
+			}
         },
     }
 </script>

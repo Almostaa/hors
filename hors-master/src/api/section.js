@@ -33,3 +33,21 @@ export function roomListById(params){
 		 params: params 
 	 });
 }
+
+export function selectdoctor(params){
+	
+	 return request({
+		 url: "/room/selectdoctor", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+export function selectdoctorlist(params){
+	
+	 return request({
+		 url: "/room/selectdoctorlist", 
+		 method: "get",
+		 params: params 
+	 });
+}

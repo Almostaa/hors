@@ -3,6 +3,7 @@ import Config from "@/config/app";
 import { Notification, Loading } from "element-ui";
 import { getToken } from "../utils/common";
 import {serverApiUrl} from "@/config/apiUrl";
+
 const service = Axios.create({
   //baseURL: "http://localhost:8090/onlineshopping",
   baseURL:serverApiUrl,
@@ -20,6 +21,7 @@ service.interceptors.request.use(
       window.loadingInstance = Loading.service();
     }
     config.headers["Authorization"] = getToken();
+	//config.headers["Authorization"] = localStorage.getItem("token");
     return config;
   },
   error => {
