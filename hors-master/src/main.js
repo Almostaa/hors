@@ -7,9 +7,10 @@ import axios from 'axios'
 import Config from "@/config/app"
 import 'element-ui/lib/theme-chalk/index.css'
 import qs from 'qs'
-import { getToken } from "@/utils/common";
+import { getToken } from "@/utils/common"
+import Chat from 'jwchat'
 
-
+Vue.use(Chat)
 Vue.prototype.$qs = qs
 Vue.config.productionTip = false
 Vue.use(elementUi)

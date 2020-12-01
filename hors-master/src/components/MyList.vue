@@ -5,10 +5,10 @@
 	  			<div class="imgqq">
 	  				<img :src="serviceImgURl+i.picture" />
 	  			</div>
-	  			<div class="lll">
-	  				<h4>{{i.title}}</h4>
+	  			<div class="lll" >
+	  				<h4 style="padding: 8px;">{{i.title}}</h4>
 					<span style="text-indent: 2em;font-size: 14px;">作者：{{i.author}}   创建时间：{{i.createtime}}</span>
-	  				<p style="text-indent: 2em;">{{i.content}}</p>
+	  				<p style="text-indent: 2em;text-align: justify;">{{i.content}}</p>
 	  			</div>
 		</router-link>
 	  	</div>
@@ -54,7 +54,9 @@ export default {
 	.lll{
 		float: right;
 		width: 770px;
-		color: #000000;
+		color: #5E5E5E;
+		margin-right: 12px;
+		font-family: "montserrat",sans-serif;
 	}
 	.lll p{
 		overflow: hidden;

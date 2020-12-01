@@ -38,9 +38,26 @@
 		</div> -->
 		
 		<div style="margin-left: 183px;margin-top:0px;">
-			  <el-tabs type="border-card" :tab-position="tabPosition" style="height: 500px;">
+			  <el-tabs type="border-card" :tab-position="tabPosition">
 			    <el-tab-pane label="账号管理">
-					<div :data="people">
+					
+					<el-card class="box-card">
+  						<div slot="header" class="clearfix">
+    						<span>用户信息</span>   							
+  						</div>	
+  						<div :data="people" id='ouser'>												
+							<li>姓名：{{people.userName | name}}</li>
+							<li>性别：{{people.sex}}</li>
+							<li>手机号：{{people.phoneNumber | phone}}</li>																																			
+							<li>身份证号：{{people.idCardNumber | idcard}}</li>
+							<li>社保卡号：{{people.socialCard | idcard}}	</li><br />
+							<el-button type="primary"  size="medium" @click="forget()" round>修改密码</el-button>	
+							<el-button type="primary" size="medium" @click="showEditDialog = true" round>完善信息</el-button>							
+						</div>						
+					</el-card>
+					
+					
+					<!-- <div :data="people">
 						<li style="font-size: 20px;margin: 10px;">
 							姓名：{{people.userName | name}}
 						</li>
@@ -62,7 +79,7 @@
 					
 						<button type="button" style="margin: 30px;color: #0000FF;height: 30px;"
 							@click="showEditDialog = true" >完善信息</button>
-					</div>
+					</div> -->
 				</el-tab-pane>
 			    <el-tab-pane label="我的预约">
 					<el-table
@@ -70,7 +87,7 @@
 					    stripe
 					    style="width: 100%">
 					    <el-table-column
-					      prop="apptNo"
+					      prop="apptno"
 					      label="编号"
 					      width="80">					      
 					    </el-table-column>
@@ -97,21 +114,28 @@
 					      label="医生">
 					    </el-table-column>
 						<el-table-column
-						  prop="apptDate"
+						  prop="apptdate"
 						  label="预约日期">
 						</el-table-column>
 						<el-table-column
-						  prop="apptTime"
+						  prop="appttime"
 						  label="预约时间">
-						</el-table-column>
-						<el-table-column
-						  prop="state"
-						  label="支付状态">
 						</el-table-column>
 						<el-table-column
 						  prop="price"
 						  label="挂号费">
 						</el-table-column>
+						<el-table-column prop="state" label="支付状态">
+						  <template slot-scope="s">
+						  	<div v-if="s.row.state==1">
+						  		<el-button type="primary" size="small" disabled>已支付</el-button>
+						  	</div>
+      						<div v-if="s.row.state==0">
+      							<el-button type="primary" size="small" 
+								@click.native="toSaveOrderAndPay(s.row.apptno,s.row.price,s.row.dName)">未支付</el-button>
+      						</div>
+      					  </template>
+						</el-table-column>												
 					  </el-table>
 				</el-tab-pane>
 			    <el-tab-pane label="门诊记录">
@@ -142,13 +166,20 @@
 						  label="结束时间">
 						</el-table-column>
 						<el-table-column
-						  prop="state"
-						  label="支付状态">
-						</el-table-column>
-						<el-table-column
 						  prop="price"
 						  label="问诊费">
 						</el-table-column>
+						<el-table-column prop="state" label="支付状态">
+						  <template slot-scope="s">
+						  	<div v-if="s.row.state==1">
+						  		<el-button type="primary" size="small" disabled>已支付</el-button>
+						  	</div>
+      						<div v-if="s.row.state==0">
+      							<el-button type="primary" size="small" @click="payment(s.row.consultNo,s.row.price,s.row.dname)">未支付</el-button>
+      						</div>							       					
+      					  </template>
+						</el-table-column>
+						
 					  </el-table>
 				</el-tab-pane>
 			  </el-tabs>
@@ -173,6 +204,7 @@
 	import Edit from "../page/add.vue";
 	import {queryUserInfo,apptInfoList,consultInfoList} from "../../api/user.js"
 	import {getToken,getUserInfo} from "../../utils/common.js"
+	import {saveOrderAndPay,saveOrderAndPayC} from "../../api/charge.js"
 	export default {
 	  data() {
 	    return {
@@ -183,6 +215,8 @@
 			apptInfoData:[],
 			consultInfoData:[],
 			showEditDialog: false,
+			apptNo:'',
+			consultNo:'',
 	    };
 	  },
 	  created() {
@@ -190,27 +224,59 @@
 	  	this.usernumber=getUserInfo().phoneNumber		
 		this.selectuser();
 		
-		apptInfoList({usno:1})
-      		.then(r => {
-        		this.apptInfoData = r.map(k=>{
-           		 k.apptInfoData = {}
-            	 return k;
-           		});
-        	
-      		})
-      .catch(() => {});
-      
-      consultInfoList({usno:1})
-      		.then(r => {
-        		this.consultInfoData = r.map(k=>{
-           		 k.consultInfoData = {}
-            	 return k;
-           	});       	
-      		})
-      .catch(() => {});
 	  },
 	  methods: {
-		  
+	  	//去支付
+	  	toSaveOrderAndPay(id,price,dname) {
+			console.log(id,price,dname)
+			this.apptNo = id
+			console.log(this.apptNo)
+	  	    
+	  	    saveOrderAndPay({
+				out_trade_no:this.apptNo,subject:"预约挂号",
+				total_amount:price,
+				body:dname,
+			})
+	  	    .then(r => {
+	  	        const divForm = document.getElementsByTagName('divform')
+	  	            if (divForm.length) {
+	  	                document.body.removeChild(divForm[0])
+	  	            }
+	  	            const div = document.createElement('divform')
+	  	            div.innerHTML = r // data就是接口返回的form 表单字符串
+	  	            document.body.appendChild(div)
+	  	            document.forms[0].setAttribute('target', '_blank') // 新开窗口跳转
+	  	            document.forms[0].submit()
+	  	    })
+	  	    .catch(() => {});
+	  	},
+		//支付门诊
+		payment(id,price,dname){
+			
+			console.log(id,price,dname)
+			this.consultNo = id
+			console.log(this.consultNo)
+			
+			saveOrderAndPayC({
+				out_trade_no:this.consultNo,
+				subject:"门诊",
+				total_amount:price,
+				body:dname,
+			})
+			.then(r => {
+			    const divForm = document.getElementsByTagName('divform')
+			        if (divForm.length) {
+			            document.body.removeChild(divForm[0])
+			        }
+			        const div = document.createElement('divform')
+			        div.innerHTML = r // data就是接口返回的form 表单字符串
+			        document.body.appendChild(div)
+			        document.forms[0].setAttribute('target', '_blank') // 新开窗口跳转
+			        document.forms[0].submit()
+			})
+			.catch(() => {});
+		},
+	  	 		  
 		selectuser(){
 			//console.log(this.userno+'ppp')
 			queryUserInfo({
@@ -219,6 +285,24 @@
 				this.people=r;
 				//console.log(this.people)
 			}).catch(r=>{})
+			
+			apptInfoList({usno:getUserInfo().userNo})
+					.then(r => {
+			  		this.apptInfoData = r.map(k=>{
+			     		 k.apptInfoData = {}
+							return k; 
+			     		});
+					})
+			.catch(() => {});
+			
+			consultInfoList({usno:getUserInfo().userNo})
+					.then(r => {
+			  		this.consultInfoData = r.map(k=>{
+			     		 k.consultInfoData = {}
+			      	 return k;
+			     	});       	
+					})
+			.catch(() => {});
 			
 		},
 		  problem(){

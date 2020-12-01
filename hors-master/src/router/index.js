@@ -88,14 +88,21 @@ const routes = [
     }
   },
   
-  {
-    path: '/order',
-    name: 'order',
-    component: function () {
-      return import('../views/page/order.vue')
-    }
-  },
- 
+ {
+     path:'/paysuccess',
+     name:'paysuccess',
+     component: function () {
+       return import('../views/pay/paysuccess.vue')
+     }
+   },
+   
+   {
+       path:'/payConsultinfo',
+       name:'payConsultinfo',
+       component: function () {
+         return import('../views/pay/payConsultinfo.vue')
+       }
+     },
   
 ]
 

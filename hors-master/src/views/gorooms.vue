@@ -58,7 +58,7 @@
 			console.log("wwww"+id);
 			this.$router.push({
 				name:'depdoctor',
-				params:{
+				query:{
 					id:id
 				}
 			})

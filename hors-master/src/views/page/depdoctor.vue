@@ -99,9 +99,7 @@
 		this.token = getToken()
 		this.usernumber=getUserInfo().phoneNumber
 		
-		console.log(this.$route.query);
-		
-	  	this.id=this.$route.params.id;
+	  	this.id=this.$route.query.id;
 		console.log("sss"+this.id)
 		getDoctorList({id:this.id})
 		.then(n=>{
@@ -134,14 +132,14 @@
 		  register(){
 		  	this.$router.push("/register")
 		  },
-		  fast(id){
+		  /* fast(id){
 			this.$router.push({
 				name:'fast',
 				params:{
 					id:id
 				}
 			})
-		  },
+		  }, */
 		  logout() {
 		  	localStorage.clear();
 		  	this.$router.push('/')
@@ -167,7 +165,7 @@
 
   .image {
     width: 210px;
-	height: 180px;
+	height: 220px;
     display: block;
   }
 

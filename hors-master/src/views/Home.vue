@@ -161,6 +161,9 @@
 			showEditDialog: false,
 			num:'',
 			serviceImgURl: serverApiUrl+'/images/home/',
+			
+			imToken:this.$route.query.im,
+			accid:this.$route.query.id,
 		};
 	  },
 	  created() {

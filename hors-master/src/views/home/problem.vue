@@ -28,7 +28,7 @@
 		</div>
 		
 		<div>
-		      <div style="color: #333333;">
+		      <div style="color: #333333;margin-left: 180px;margin-right: 150px;">
 					<el-tabs v-model="activeName" type="card">
 					  <el-tab-pane
 						v-for="item in categoryList"
@@ -49,6 +49,7 @@
 			    <div>
 			      <el-pagination
 			        background
+					style="margin-left: 180px;"
 			        layout="prev, pager, next"
 			        :page-size="pageSize"
 					:current-page="pageNo"

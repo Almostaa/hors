@@ -22,3 +22,14 @@ export function getDoctorInfor(params){
 		 params: params 
 	 });
 }
+
+/*根据accid查询医生accid,token的信息*/
+export function selectDoctorImInfo(params){
+	
+	 return request({
+		 //如果是绝对路径就不会在使用配置里的url
+		 url: "/doctor/selectDocIM", 
+		 method: "get",
+		 params: params 
+	 });
+}

@@ -142,15 +142,14 @@
 								  /* localStorage.setItem("token",r.data.token);
 								  localStorage.setItem("usernumber",r.data.user.phoneNumber)
 								  localStorage.setItem("userno",r.data.user.userNo)
+								   */
 								  
-								  localStorage.setExpire("token",Date.now(),5000)
-								  
-								  window.setInterval(()=>{
-								      console.log(localStorage.getExpire("token"));
-								  },1000)*/
-								  this.gotohome() 
 								  setUserInfo(r.data.user);
 								  setToken(r.data.token);
+								  localStorage.setItem("accid", r.data.userImInfo.accid)
+								  localStorage.setItem("imToken", r.data.userImInfo.token)
+								
+								  this.$router.push('/') 
 							  } else {
 							    this.$message({
 							  		message: "用户名或密码错误！",
@@ -180,9 +179,14 @@
 							   /* localStorage.setItem("token",r.data.token)
 							    localStorage.setItem("usernumber",r.data.user.phoneNumber)
 							    localStorage.setItem("userno",r.data.user.userNo) */
-							    this.gotohome()
+							   
 								setUserInfo(r.data.user);
 								setToken(r.data.token);
+								
+								localStorage.setItem("accid", r.data.userImInfo.accid)
+								localStorage.setItem("imToken", r.data.userImInfo.token)
+								 this.gotohome()
+								 
 							  } else {
 							    this.$message({
 							  		message: "用户名或验证码错误！",

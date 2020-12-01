@@ -97,7 +97,7 @@
 		             message: r.msg,
 		             type: r.status
 		           });
-					this.$parent.selectuser();
+					this.$parent.useropp();
 					this.$parent.showEditDialog = false
 					
 		         })

@@ -1,6 +1,6 @@
 <template>
   <div>
-	  <div class="single-member effect-3" style="margin-left: 110px;margin-right: 100px;">
+	  <div class="single-member effect-3" style="margin-left: 135px;margin-right: 100px;">
 	  	<el-row >
 	  	  <el-col :span="6" v-for="(d,o) in list" :key="o" style="padding: 40px;">
 			<router-link :to="{ path: '/details', query: {id:d.doctor.dno} }" >
@@ -64,7 +64,7 @@ export default {
 
   .image {
     width: 210px;
-	height: 180px;
+	height: 220px;
     display: block;
   }
 

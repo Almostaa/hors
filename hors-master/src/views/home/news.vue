@@ -28,28 +28,28 @@
 		</div>
 		
 		<div>
-			<div style= "position:relative " class="aaaa"> 
+			<div style= "position:relative;" class="aaaa"> 
 				<div style= "position:absolute; left:200px; top: 350px; color:#000000; font-weight:bold ;z-index: 1;">
-					<a href="" style="color: #000000;font-size: 20px;">
+					<a href="" style="color: #27408B;font-size: 20px; ">
 						{{newsid1.newstitle}}</a> 
 				</div> 
-				<a href=""><img :src="serviceImgURl+newsid1.newspicture" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid1.newspicture" style="width: 500px;height: 400px;"/></a> 
 			</div>
 			<div style= "position:relative " class="aaa">
 				<div style= "position:absolute; left:610px; top: 160px; color:#000000; font-weight:bold;z-index: 1; ">
-					<a href="" style="color: #000000;font-size: 15px;">
+					<a href="" style="color: #27408B;font-size: 15px;">
 						{{newsid2.newstitle}}
 					</a> 
 				</div> 
-				<a href=""><img :src="serviceImgURl+newsid2.newspicture" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid2.newspicture" style="width: 200px;height: 199px;"/></a> 
 			</div>
 			<div style= "position:relative " class="aa">
 				<div style= "position:absolute; left:610px; top: 360px; color:#000000; font-weight:bold;z-index: 1; ">
-					<a href="" style="color: #000000;font-size: 15px;">
+					<a href="" style="color: #27408B;font-size: 15px;">
 						{{newsid3.newstitle}}
 					</a> 
 				</div> 
-				<a href=""><img :src="serviceImgURl+newsid3.newspicture" /></a> 
+				<a href=""><img :src="serviceImgURl+newsid3.newspicture" style="width: 200px;height: 199px;"/></a> 
 			</div>
 			<div style="margin-right: 30px;">
 				<div class="new_list_con">
@@ -79,8 +79,7 @@
 		            :name="''+item.informationtypeno"
 		          />
 		        </el-tabs>
-		      </div>
-			  
+		      </div>			  
 			  <!-- 主要内容区 -->
 			  <div class="main">
 			    <div class="list">
@@ -287,6 +286,7 @@
 		top:26%;
 		left: 100px;
 		z-index: 0;
+		border: 1px solid #AAAAAA;
 		
 	} 
 	.aaaa img:hover {
@@ -301,6 +301,7 @@
 		position:absolute;
 		top:26%;
 		z-index: 0;
+		border: 1px solid #AAAAAA;
 	}
 	.aaa img:hover {
 	    width: 200px;
@@ -316,6 +317,7 @@
 		position:absolute;
 		margin-top: 200px;
 		z-index: 0;
+		border: 1px solid #AAAAAA;
 	}
 	
 	 .aa img:hover {

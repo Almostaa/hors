@@ -29,28 +29,21 @@
 		<div>
 			<img src="../../assets/logo.png" style="width: 400px;height: 380px;float: left;margin-left: 200px;">
 		</div>
-		<div style="margin-left: 600px;margin-right: 200px;">
-			<h3 style="text-align: center;">医院简介</h3>
-			<h5 style="list-style-type: circle;">上卷·六鱼</h5>
-			<p style="text-indent: 2em;">羹对饭，柳对榆。短袖对长裾。鸡冠对凤尾，芍药对芙蕖。周有若，汉相如。王屋对匡庐。
-			月明山寺远，风细水亭虚。壮士腰间三尺剑，男儿腹内五车书。疏影暗香，和靖孤山梅蕊放；轻阴清昼，渊明旧宅柳条舒。</p>
-			<p style="text-indent: 2em;">吾对汝，尔对余。选授对升除。书箱对药柜，耒耜对耰锄。参虽鲁，回不愚。阀阅对阎闾。
-			诸侯千乘国，命妇七香车。穿云采药闻仙人，踏雪寻梅策蹇驴。玉兔金乌，二气精灵为日月；洛龟河马，五行生克在图书。</p>
-			<p style="text-indent: 2em;">欹对正，密对疏。囊橐对苞苴。罗浮对壶峤，水曲对山纡。骖鹤驾，侍鸾舆。桀溺对长沮。
-			搏虎卞庄子，当熊冯婕妤。南阳高士吟梁父，西蜀才人赋子虚。三径风光，白石黄花供杖履；五湖烟景，青山绿水在樵渔。</p>
-		</div>
-		<div style="margin-left: 200px;margin-right: 200px;">
-			<h5>上卷·七虞</h5>
-			<p style="text-indent: 2em;">红对白，有对无。布谷对提壶。毛锥对羽扇，天阙对皇都。谢蝴蝶，郑鹧鸪。蹈海对归湖。
-			花肥春雨润，竹瘦晚风疏。麦饭豆糜终创汉，莼羹胪脍竟归吴。琴调轻弹，杨柳月中潜去听；酒旗斜挂，杏花村里齐来沽。</p>
-			<p style="text-indent: 2em;">罗对绮，茗对蔬。柏秀对松枯。中元对上巳，返璧对还珠。云梦泽，洞庭湖。玉烛对冰壶。
-			苍头犀角带，绿鬓象牙梳。松阴白鹤声相应，镜里青鸾影不孤。竹户半开，对牖不知人在否？柴门深闭，停车还有客来无？</p>
-			<p style="text-indent: 2em;">宾对主，婢对奴。宝鸭对金凫。升堂对入室，鼓瑟对投壶。觇合璧，颂联珠。提瓮对当垆。
-			仰高红日近，望远白云孤。歆向秘书窥二酉，机云芳誉动三吴。祖饯三杯，老去常斟花下酒；荒田五亩，归来独荷月中锄。</p>
-			<p style="text-indent: 2em;">君对父，魏对吴。北岳对西湖。菜蔬对茶荈，苣藤对菖蒲。梅花数，竹叶符。廷议对山呼。
-			两都班固赋，八阵孔明图。田庆紫荆堂下茂，王裒青柏墓前枯。出塞中郎，羝有乳时归汉室；质秦太子，马生角日返燕都。</p>
-		</div>
-		<h4 style="color: #FFFFFF;">笠翁对韵</h4>
+	<div id='texts' style="margin-left: 600px;margin-right: 200px;">
+			<h3 style="text-align: center;margin: 8px 0px ;">医院简介</h3>
+			<h5 style="list-style-type: circle;"></h5>
+			<p>黑芝麻医院座落于澳门路凼中心地带上的澳门科技大学校园内。医院宗旨是希望能在舒适和愉快的环境下，
+				以先进的医疗设备，为患者提供优质的中、西医医疗服务。医院为澳门科技大学医学院、中医药学院及药学院的临床带教基地，
+				也是全澳唯一 一所具备大学支持的医院。本院住院部设有双人病房、私家病房及豪华病房，适合不同病患的需要。</p>
+			<p>百余年来，我院拥有着一批国内的首创专业学科以及在我国率先开展的诊疗技术，如国内首创儿科教研室（1929）、
+				泌尿外科（1946）、肾脏病专业(1950)、综合医院心血管病房(50年代)、儿科神经专业(1961)等；在国内率先开展改进静脉麻醉（1951）、
+				先心手术（50年代）、肾移植（1960）、引进人工晶体植入术（1983）、冠心病介入性治疗(1986)、第一台自体血液回收机（1997）、
+				微创切口肺移植（2005）、经皮心室重建术（2013）等，为我国的医学事业作出了卓越的贡献。</p>
+			<p>随着国家医药卫生体制改革的不断推进，作为“国家队”的北大医院也紧跟时代步伐，
+				“顺应医改、精细管理”，竭尽全力改善医疗卫生环境和方便人民群众就医。全体北大医院职工也将“不忘初心，
+				牢记使命，不懈奋斗，走向卓越”，构建和谐医患环境、助力健康中国建设。</p>
+		</div>		
+		<div style="height: 60px;"></div>
 		<div style="height: 50px;width: 100%;position: fixed;bottom: 0;text-align: center;background-color: #aaaa7f;">
 			<p style="font-size:12px;text-align:center;">
 				Copyright 2020 多吃黑芝麻.AllRightsReserved. 
@@ -103,6 +96,12 @@ import {getToken,getUserInfo} from "../../utils/common.js"
 </script>
 
 <style>
+	#texts p{
+		text-indent: 2em;
+		text-align: justify;
+		font-family: "montserrat",sans-serif;
+		color: #5E5E5E;				
+	}
 	.title{
 		color: #0000FF;
 		margin-left: 150px;

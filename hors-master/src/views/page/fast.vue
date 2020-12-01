@@ -97,7 +97,7 @@
 			</p>
 		</div> 
 		
-		<Edit :showEditDialog="showDialog" @close="showDialog = false" />
+		<Edit :showDialog="showDialog" @close="showDialog = false" />
 		<Add :showEditDialog="showEditDialog" @close="showEditDialog = false" />
 	</div>
 </template>
@@ -108,7 +108,7 @@
 	import { serverApiUrl } from "../../config/apiUrl" 
 	import Edit from "../../views/page/order.vue"
 	import {queryUserInfo} from "../../api/user.js"
-	import Add from "../../views/page/add.vue"
+	import Add from "../../views/pay/doadd.vue"
 	import {getToken,getUserInfo} from "../../utils/common.js"
 	export default {
 	  data() {
@@ -131,16 +131,17 @@
 			doctorno:'',
 			time:'',
 			forms:[],
+			userName:''
 	    };
 	  },
 	  created() {
-		  
+		  this.useropp()
 		  this.token = getToken()
 		  this.usernumber=getUserInfo().phoneNumber
 		  this.doctorno=this.$route.query.id
 		  this.doctorinfor()
 	      this.nowdate()
-		  this.useropp()
+		  
 	    },
 	  methods: {
 		
@@ -167,14 +168,18 @@
 			 var weekday=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
 			 date.forEach((item,index)=>{//循坏日期
 			    var f=new Date(item);
+				//console.log(item)
 			    var week=f.getDay()//计算出星期几
+				//console.log(f)
 			  var str1=item.split('-');
+			  //console.log(str1)
 			  var strs=str1[1]+'/'+str1[2];
 			 	  
 			    var weeks=weekday[week]/* 将计算出来的时间带入数字得出中文 */
 			    var time= Math.round(new Date(item) / 1000)//时间戳转换
 			    var s={}//用于存储每个日期对象
 			    s.date=item;
+				//console.log(s.date)
 			    s.name=strs;
 			    s.week=weeks;
 			    s.times=time;
@@ -197,7 +202,7 @@
 			 .then(r=>{
 
 			 	this.datelist=r;
-			
+				console.log(this.same_week)
 				for(var i= 0;i<this.datelist.length;i++ ){
 					
 						if(this.datelist[i].date == this.same_week[0].date){
@@ -288,38 +293,61 @@
 		getDay(day){
 		 	var today = new Date();
 		 	var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
+			console.log(targetday_milliseconds)
 		 	today.setTime(targetday_milliseconds); //注意，这行是关键代码
 		 	var tYear = today.getFullYear();
 		 	var tMonth = today.getMonth();
-		 	var tDate = today.getDate();
+			console.log(tMonth)
+		 	var tDate = today.getDate()< 10 ? '0' + today.getDate() : today.getDate();
+			console.log(tDate)
 		 	tMonth = this.doHandleMonth(tMonth + 1);
+			console.log(tMonth)
 		 	tDate =  this.doHandleMonth(tDate);
+			console.log(tDate)
 		 	return tYear+"-"+tMonth+"-"+tDate;
 		},
 		useropp(){
-			queryUserInfo({
-				userNo:getUserInfo().userNo
-			}).then(r=>{
-				this.forms=r;
-			}).catch(r=>{})
+			
+			if(this.token != null || this.token != ''||this.token != undefined){
+				queryUserInfo({
+					userNo:getUserInfo().userNo
+				}).then(r=>{
+					this.forms=r;
+					this.userName=this.forms.userName
+				}).catch(r=>{})
+			}else{
+				console.log("请先登录！")
+			}
+			
 		},
 		 order1(o){
-			 if(this.forms.userName == '' || getUserInfo().userName == null){
-			 	this.showEditDialog = true
+			 console.log(this.userName)
+			 if(this.token == null || this.token == ''){
+				 alert("请先登录！")
+				 this.login()
+			 }else if(this.userName != null || getUserInfo().userName != null){
+			 	this.p = o
+			 	this.time = '上午'
+			 	this.showDialog = true
+			 	
 			 }else{
-				this.p = o
-				this.time = '上午'
-				this.showDialog = true
-			}
+			 	this.showEditDialog = true
+			 }
 		 },
 		 order2(o){
-		 			 if(this.forms.userName == '' || getUserInfo().userName == null){
-		 			 	this.showEditDialog = true
-		 			 }else{
-		 				this.p = o
-						this.time = '下午'
-		 				this.showDialog = true
-		 			}
+			 console.log(this.userName)
+			 if(this.token == null || this.token == ''){
+				  alert("请先登录！")
+				 this.login()
+				 
+				}else if(this.userName != null || getUserInfo().userName != null){
+					this.p = o
+					this.time = '下午'
+					this.showDialog = true
+		 			
+		 		}else{
+		 			this.showEditDialog = true
+		 		}
 		 },
 		  problem(){
 			  this.$router.push('/problem')
@@ -364,7 +392,7 @@
 		overflow: hidden;
 	}
 	.img{
-		width: 130px;
+		width: 190px;
 		float: left;
 	}
 	.img img{
@@ -377,7 +405,7 @@
 	}
 	.lll{
 		float: right;
-		width: 700px;
+		width: 645px;
 	}
 	.lll p{
 		overflow: hidden;

@@ -40,3 +40,96 @@ export function updateCount(params){
 		 data: params 
 	 });
 }
+
+/*查询用户问诊信息*/
+export function consultInfoList(params){	
+	 return request({
+		 url: "consultInfo/list", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+/*确认订单后插入数据*/
+export function insertOrder(params){	
+	 return request({
+		 url: "apptInfo/insertOrder", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+/*支付成功后更新状态码*/
+export function updateOrder(params){	
+	 return request({
+		 url: "apptInfo/updateOrder", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+
+/**
+ * 保存订单并支付
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function saveOrderAndPay(params) {
+  return request({
+    url: "/apptInfo/toSaveAndPay", //如果是绝对路径就不会在使用配置里的url
+    method: "post",
+    data: params //注意：如果是post请求请使用 data: params
+  });
+}
+
+
+//门诊
+
+/**
+ * 保存订单并支付
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function saveOrderAndPayC(params) {
+  return request({
+    url: "/consultInfo/toSaveAndPay", //如果是绝对路径就不会在使用配置里的url
+    method: "post",
+    data: params //注意：如果是post请求请使用 data: params
+  });
+}
+
+/*确认订单后插入数据*/
+export function insertOrderC(params){	
+	 return request({
+		 url: "consultInfo/insertOrder", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+/*支付成功后更新状态码*/
+export function updateOrderC(params){	
+	 return request({
+		 url: "consultInfo/updateOrder", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+/*根据门诊编号查询支付状态码*/
+export function getConsultInfoState(params){	
+	 return request({
+		 url: "consultInfo/getConsultInfoState", 
+		 method: "get",
+		 params: params 
+	 });
+}
+
+/*退出咨询页面更新结束时间*/
+export function updateDate(params){	
+	 return request({
+		 url: "consultInfo/updateDate", 
+		 method: "get",
+		 params: params 
+	 });
+}
