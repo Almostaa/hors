@@ -22,6 +22,9 @@ public interface UserMapper {
 	public User queryUserInfo( Integer id);
 	/**完善用户信息*/
 	public Integer improveUserInfo(User user);
+
+    /*查询用户是否存在*/
+    User selectuser(String name);
 	
 
 }

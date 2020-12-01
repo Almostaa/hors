@@ -1,5 +1,6 @@
 package com.sesame.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author JChiang
  * @currentTime 2020年10月30日下午2:14:40
  */
+@Configuration
 public class WebMvcConfig implements WebMvcConfigurer{
 
 	/**

@@ -1,8 +1,16 @@
 package com.sesame.controller;
 
+import java.util.Date;
+import java.util.Timer;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Schedules;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +21,8 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.sesame.utils.CodeTimerTaskUtil;
+import com.sesame.utils.CodeTimerUtil;
 
 /**
  *  短信验证码登录
@@ -70,6 +80,20 @@ public class AliyunSmsController {
         }
         return sendSmsResponse;
     }
+    
+    
+    private static String tel;
+    
+    @Resource
+    private CodeTimerUtil codeTimerUtil;
+ 
+   
+    
+    public static String getTel() {
+    	
+    	return tel;
+    }
+    
 
     // 以下为测试代码，随机生成验证码
     private static int newcode;
@@ -82,12 +106,12 @@ public class AliyunSmsController {
         newcode = (int) (Math.random() * 9999) + 100;  //每次调用生成一次四位数的随机数
     }
     
-    @Autowired
-    HttpSession session;
 	/**phone为测试接收验证码的手机号*/
     @RequestMapping("smsStudent")
-    public void send(String phone) throws ClientException, com.aliyuncs.exceptions.ClientException {
-        setNewcode();
+
+    public void send(String phone,HttpServletRequest request) throws ClientException, com.aliyuncs.exceptions.ClientException {
+        tel = phone;
+    	setNewcode();
         String code = Integer.toString(getNewcode());
         SendSmsResponse sendSms = sendSms(phone, code);//填写你需要
         System.out.println("短信接口返回的数据----------------");
@@ -96,13 +120,15 @@ public class AliyunSmsController {
         System.out.println("Message=" + sendSms.getMessage());
         System.out.println("RequestId=" + sendSms.getRequestId());
         System.out.println("BizId=" + sendSms.getBizId());
-         
-        session.setAttribute("codes", code);
-        session.setMaxInactiveInterval(60*5);
-        
-    }
     
-    /**将生成的验证码存储到session*/
+        request.getServletContext().setAttribute(tel, code);
+        //启动验证码定时清除任务
+        codeTimerUtil.startupTimer();
     
-
+ 
+       
+    }   
+    
+    
+    
 }

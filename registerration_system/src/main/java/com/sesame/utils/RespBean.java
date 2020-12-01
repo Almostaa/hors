@@ -30,6 +30,14 @@ public class RespBean {
 		this.status = status;
 		this.msg = msg;
 	}
+
+	public RespBean(String status, String msg, int totalCount) {
+		super();
+		this.status = status;
+		this.msg = msg;
+		this.totalCount = totalCount;
+	}
+
 	//列表分页作为返回的数据
 	public RespBean(String status, String msg, int totalCount, List<Map<String, Object>> list) {
 		super();

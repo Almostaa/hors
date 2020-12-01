@@ -46,9 +46,11 @@ public class UserServiceImpl implements UserService {
 		
 		return userMapper.improveUserInfo(user);
 	}
-	
-	
-	
-	
+
+	@Override
+	public User selectuser(String name) {
+		return userMapper.selectuser(name);
+	}
+
 
 }

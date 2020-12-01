@@ -11,5 +11,8 @@ public interface DoctorService {
 
     /*根据编号查询医生所有信息*/
     Doctor selectByPrimaryKey(Integer dno);
+    
+    //查询所有医生
+    List<Doctor> selectAllDoc();
 
 }

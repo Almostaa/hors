@@ -9,7 +9,8 @@ public class User {
 	private String idCardNumber;	
 	private String socialCard;
 	private String phoneNumber;
-	
+
+
 	
 	public User() {
 		super();
@@ -34,6 +35,7 @@ public class User {
 		this.socialCard = socialCard;
 		this.phoneNumber = phoneNumber;
 	}
+
 
 
 	public Integer getUserNo() {
@@ -104,6 +106,7 @@ public class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
 
 
 	@Override

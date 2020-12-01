@@ -15,6 +15,14 @@ public interface DoctorMapper {
 
     /*查询某科室的医生*/
     List<Doctor> doctorlist(Integer roomNo);
+    
+    /**问诊费*/
+    public Doctor queryInquiry();
+    /**挂号费*/
+    public Doctor queryRegister();
+    
+    //查询所有医生
+    List<Doctor> selectAllDoc();
 
 
 

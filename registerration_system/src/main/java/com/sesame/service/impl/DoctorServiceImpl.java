@@ -23,4 +23,10 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor selectByPrimaryKey(Integer id) {
         return doctorMapper.selectByPrimaryKey(id);
     }
+    
+    //查询所有医生
+    public List<Doctor> selectAllDoc(){
+    	
+    	return doctorMapper.selectAllDoc();
+    }
 }
