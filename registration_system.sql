@@ -11,31 +11,46 @@
  Target Server Version : 50562
  File Encoding         : 65001
 
- Date: 11/11/2020 14:47:43
+ Date: 01/12/2020 13:09:19
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for  inquiry
+-- Table structure for apptinfo
 -- ----------------------------
-DROP TABLE IF EXISTS ` inquiry`;
-CREATE TABLE ` inquiry`  (
-  ` inquiryNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '问诊号',
+DROP TABLE IF EXISTS `apptinfo`;
+CREATE TABLE `apptinfo`  (
+  `apptNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '挂号订单编号',
   `usno` int(11) DEFAULT NULL COMMENT '用户编号',
   `dno` int(11) DEFAULT NULL COMMENT '医生编号',
-  `state` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '支付状态，1已支付，0未支付',
+  `state` int(20) DEFAULT NULL COMMENT '支付状态，1已支付，0未支付',
   `createTime` datetime DEFAULT NULL COMMENT '创建时间',
   `overTime` datetime DEFAULT NULL COMMENT '关闭时间',
-  PRIMARY KEY (` inquiryNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+  `price` decimal(10, 2) DEFAULT NULL COMMENT '挂号费',
+  `apptDate` date DEFAULT NULL COMMENT '预约日期',
+  `apptTime` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '预约时间段',
+  PRIMARY KEY (`apptNo`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 102 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
--- Records of  inquiry
+-- Records of apptinfo
 -- ----------------------------
-INSERT INTO ` inquiry` VALUES (1, 1, 101, '1', '2020-10-13 18:13:07', '2020-10-13 13:03:17');
-INSERT INTO ` inquiry` VALUES (2, 2, 102, '0', '2020-10-09 18:13:11', '2020-10-10 01:03:31');
+INSERT INTO `apptinfo` VALUES (1, 1, 101, 1, '2020-10-13 18:13:07', '2020-10-13 13:03:17', 5.00, '2020-11-23', '9:00-11:00');
+INSERT INTO `apptinfo` VALUES (2, 2, 102, 1, '2020-10-09 18:13:11', '2020-11-21 11:26:05', 6.00, '2020-10-12', '2:00-4:00');
+INSERT INTO `apptinfo` VALUES (3, 1, 101, 0, '2019-10-12 15:19:28', NULL, 5.00, '2019-10-12', '上午');
+INSERT INTO `apptinfo` VALUES (4, 1, 101, 0, '2020-11-20 08:55:24', NULL, 3.00, '2020-11-20', '下午');
+INSERT INTO `apptinfo` VALUES (85, 8, 101, 0, '2020-11-24 14:21:02', NULL, 3.00, '2020-11-26', '上午');
+INSERT INTO `apptinfo` VALUES (86, 8, 101, 1, '2020-11-24 14:22:51', '2020-11-24 14:25:14', 3.00, '2020-11-26', '上午');
+INSERT INTO `apptinfo` VALUES (92, 8, 101, 0, '2020-11-24 15:06:17', NULL, 3.00, '2020-11-25', '下午');
+INSERT INTO `apptinfo` VALUES (93, 16, 101, 1, '2020-11-26 13:58:56', '2020-11-26 14:00:59', 3.00, '2020-11-27', '下午');
+INSERT INTO `apptinfo` VALUES (94, 16, 101, 0, '2020-11-26 14:00:15', NULL, 3.00, '2020-11-27', '下午');
+INSERT INTO `apptinfo` VALUES (97, 16, 101, 1, '2020-11-26 14:08:54', '2020-11-26 14:09:22', 3.00, '2020-11-27', '下午');
+INSERT INTO `apptinfo` VALUES (98, 17, 101, 0, '2020-11-30 20:34:23', NULL, 3.00, '2020-12-03', '上午');
+INSERT INTO `apptinfo` VALUES (99, 17, 101, 1, '2020-11-30 20:34:30', '2020-11-30 20:35:50', 3.00, '2020-12-01', '上午');
+INSERT INTO `apptinfo` VALUES (100, 20, 101, 0, '2020-11-30 20:44:07', NULL, 3.00, '2020-12-01', '上午');
+INSERT INTO `apptinfo` VALUES (101, 20, 101, 1, '2020-11-30 20:45:25', '2020-11-30 20:45:52', 3.00, '2020-12-01', '上午');
 
 -- ----------------------------
 -- Table structure for charge
@@ -47,7 +62,7 @@ CREATE TABLE `charge`  (
   `fee` double(10, 2) DEFAULT NULL COMMENT '费用',
   `priceTypeNo` int(11) DEFAULT NULL COMMENT '价格类型编号',
   PRIMARY KEY (`chargeNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of charge
@@ -59,6 +74,7 @@ INSERT INTO `charge` VALUES (4, 4, 6.00, 1);
 INSERT INTO `charge` VALUES (5, 2, 5.00, 2);
 INSERT INTO `charge` VALUES (6, 3, 10.00, 2);
 INSERT INTO `charge` VALUES (7, 4, 20.00, 2);
+INSERT INTO `charge` VALUES (8, 1, 3.00, 2);
 
 -- ----------------------------
 -- Table structure for charge_type
@@ -75,6 +91,37 @@ CREATE TABLE `charge_type`  (
 -- ----------------------------
 INSERT INTO `charge_type` VALUES (1, '挂号费');
 INSERT INTO `charge_type` VALUES (2, '诊疗费');
+
+-- ----------------------------
+-- Table structure for consultinfo
+-- ----------------------------
+DROP TABLE IF EXISTS `consultinfo`;
+CREATE TABLE `consultinfo`  (
+  `consultNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '门诊订单编号',
+  `usno` int(11) DEFAULT NULL COMMENT '用户编号',
+  `dno` int(11) DEFAULT NULL COMMENT '医生编号',
+  `state` int(2) DEFAULT NULL COMMENT '支付状态',
+  `startTime` datetime DEFAULT NULL COMMENT '创建时间',
+  `endTime` datetime DEFAULT NULL COMMENT '关闭时间',
+  `price` double(10, 2) DEFAULT NULL COMMENT '问诊费',
+  PRIMARY KEY (`consultNo`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of consultinfo
+-- ----------------------------
+INSERT INTO `consultinfo` VALUES (1, 1, 101, 1, '2020-10-14 22:10:04', '2020-10-15 01:03:59', 20.00);
+INSERT INTO `consultinfo` VALUES (2, 1, 102, 0, '2020-10-14 22:10:08', '2020-10-15 01:04:06', 80.00);
+INSERT INTO `consultinfo` VALUES (3, 1, 103, 0, '2020-10-21 22:10:12', '2020-10-22 01:04:10', 65.00);
+INSERT INTO `consultinfo` VALUES (64, 16, 102, 1, '2020-11-26 21:48:51', '2020-11-26 21:49:02', 20.00);
+INSERT INTO `consultinfo` VALUES (65, 16, 101, 0, NULL, NULL, 5.00);
+INSERT INTO `consultinfo` VALUES (66, 17, 102, 0, NULL, NULL, 20.00);
+INSERT INTO `consultinfo` VALUES (67, 17, 103, 1, '2020-11-28 14:10:32', '2020-11-28 14:12:08', 3.00);
+INSERT INTO `consultinfo` VALUES (68, 17, 104, 1, '2020-11-30 20:01:56', '2020-11-30 20:12:14', 5.00);
+INSERT INTO `consultinfo` VALUES (69, 17, 102, 1, '2020-11-30 20:33:38', '2020-11-30 20:33:42', 20.00);
+INSERT INTO `consultinfo` VALUES (70, 20, 102, 1, '2020-12-01 12:39:56', '2020-12-01 12:54:34', 20.00);
+INSERT INTO `consultinfo` VALUES (71, 20, 102, 1, '2020-12-01 12:55:14', '2020-12-01 12:58:22', 20.00);
+INSERT INTO `consultinfo` VALUES (72, 20, 102, 1, '2020-12-01 12:59:49', '2020-12-01 13:01:52', 20.00);
 
 -- ----------------------------
 -- Table structure for doctor
@@ -96,7 +143,7 @@ CREATE TABLE `doctor`  (
 -- Records of doctor
 -- ----------------------------
 INSERT INTO `doctor` VALUES (101, '张三丰', '男', 1, '主治医师', '2', '创立武当派、振兴道教、发扬太极拳、武学泰山北斗', '1.png');
-INSERT INTO `doctor` VALUES (102, '华佗', '男', 1, '主任医师', '4', '外科鼻祖，发明麻沸散、五禽戏', '2.png');
+INSERT INTO `doctor` VALUES (102, '华佗', '男', 1, '主任医师', '4', '外科鼻祖，发明麻沸散、五禽戏，爱吃饭', '2.png');
 INSERT INTO `doctor` VALUES (103, '李时珍', '女', 1, '住院医师', '1', '明代著名医药学家。与“医圣”万密斋齐名，古有“万密斋的方，李时珍的药”之说。', '3.png');
 INSERT INTO `doctor` VALUES (104, '张文', '男', 2, '主治医师', '2', '擅长心血管疾病诊治、预防、随访管理。尤其是难治性高血压、心房颤动、冠心病、心力衰竭的诊治，相关慢病如高脂血症、睡眠障碍的防治管理', '4.png');
 INSERT INTO `doctor` VALUES (105, '徐伟海', '男', 2, '副主任医师', '3', '疑难脑卒中，青年卒中，中枢神经系统疾病疑难疾病，头晕，头痛，癫痫，帕金森病，痴呆和其他危重神经系统疾病。世界神经病学联盟神经超声执委会委员，中国医师协会神经超声专委会主任委员，中国研究型医院协会神经科学专委会副主任委员。', '5.png');
@@ -117,8 +164,8 @@ INSERT INTO `doctor` VALUES (121, '冯美玲', '女', 12, '主治医师', '2', '
 INSERT INTO `doctor` VALUES (122, '王全', '男', 5, '主治医师', '2', '主要研究领域为恶性肿瘤（胃肠肿瘤）的内科治疗，特别擅长分子靶向与免疫治疗', '20.png');
 INSERT INTO `doctor` VALUES (123, '别发咍', '男', 14, '主任医师', '4', '常见实体肿瘤的诊治，尤其是脑肿瘤包括脑转移癌的内科治疗', '21.png');
 INSERT INTO `doctor` VALUES (124, '郝颖', '男', 13, '住院医师', '1', ' 股骨头坏死，髋臼发育不良，老年膝关节骨关节炎，类风湿性关节炎，强直性脊柱炎，复杂人工关节置换、人工关节翻修手术', '22.png');
-INSERT INTO `doctor` VALUES (125, '余林东', '男', 28, '主治医师', '2', '颈椎病、腰椎滑脱、椎管内肿瘤、脊柱侧弯、脊柱感染性疾病及骨科疑难杂症的诊断和治疗。', '11.png');
-INSERT INTO `doctor` VALUES (126, '向浩', '男', 28, '住院医师', '1', '专业特长：嗓音疾病及喉癌、咽喉肿瘤治疗。1、 嗓音疾病治疗：声带息肉、声带粘连、声带麻痹、气管狭窄的微创治疗。2、 喉癌前病变治疗：声带白斑、喉白斑、肥厚性喉炎、喉乳头状瘤的微创手术。3、 喉癌、喉咽癌治疗：早期喉癌的微创手术，中晚期喉癌保留讲话功能的喉部分治疗。4、 晚期喉癌全喉切除术后发声重建恢复讲话功能。5、 扁桃体癌、喉咽癌、咽旁肿瘤、颈淋巴结转移的外科治疗及综合治疗；复杂喉癌、咽喉肿瘤外科治疗，头颈肿瘤术后组织缺损修复（胸大肌皮瓣、股外侧瓣、前臂皮瓣、锁骨上皮瓣、游离空肠等修复术后组织缺损）。', '11.png');
+INSERT INTO `doctor` VALUES (125, '余林东', '男', 28, '主治医师', '2', '颈椎病、腰椎滑脱、椎管内肿瘤、脊柱侧弯、脊柱感染性疾病及骨科疑难杂症的诊断和治疗。', '6.png');
+INSERT INTO `doctor` VALUES (126, '向浩', '男', 28, '住院医师', '1', '专业特长：嗓音疾病及喉癌、咽喉肿瘤治疗。1、 嗓音疾病治疗：声带息肉、声带粘连、声带麻痹、气管狭窄的微创治疗。2、 喉癌前病变治疗：声带白斑、喉白斑、肥厚性喉炎、喉乳头状瘤的微创手术。3、 喉癌、喉咽癌治疗：早期喉癌的微创手术，中晚期喉癌保留讲话功能的喉部分治疗。4、 晚期喉癌全喉切除术后发声重建恢复讲话功能。5、 扁桃体癌、喉咽癌、咽旁肿瘤、颈淋巴结转移的外科治疗及综合治疗；复杂喉癌、咽喉肿瘤外科治疗，头颈肿瘤术后组织缺损修复（胸大肌皮瓣、股外侧瓣、前臂皮瓣、锁骨上皮瓣、游离空肠等修复术后组织缺损）。', '7.png');
 INSERT INTO `doctor` VALUES (127, '向军', '男', 29, '主任医师', '4', '诊治角膜病、化学伤、干眼症、翼状胬肉、角膜移植、羊膜移植、结膜移植、义眼座植入、泪道置管、倒睫等。 擅长肉毒素注射治疗眼睑痉挛，去除脸部细纹（包括抬头纹，鱼尾纹，皱眉紋），瘦脸（v脸）', '25.png');
 INSERT INTO `doctor` VALUES (128, '王文东', '男', 15, '副主任医师', '3', '1.慢性软组织疼痛：关节和脊柱周围疾病、带状疱疹后遗神经痛的诊疗尤其是微创治疗；2.中晚期癌痛的治疗：规范癌痛药物治疗，提高肿瘤患者生活质量，同时通过射频消融、微波消融以及建立椎管内尤其是鞘内给药通道等疼痛介入手段治疗顽固性癌痛；3.中长期静脉输液通道的建立：静脉输液港（port）的植入和并发症的处理', '26.png');
 INSERT INTO `doctor` VALUES (129, '秦枳', '男', 16, '主治医师', '2', '各种疾病导致营养不良、营养性疾病、消化与营养、新生儿和婴幼儿营养、围手术期肠外肠内营养支持，以及营养评估等方面的临床工作和研究。', '27.png');
@@ -129,24 +176,118 @@ INSERT INTO `doctor` VALUES (133, '胡佳俊', '男', 46, '住院医师', '1', '
 INSERT INTO `doctor` VALUES (134, '刘嘉豪', '男', 52, '主治医师', '2', '擅长呼吸系统疑难病症综合影像诊断，在肺癌的CT和核磁共振诊断方面有丰富的经验。', '32.png');
 
 -- ----------------------------
+-- Table structure for doctor_im_info
+-- ----------------------------
+DROP TABLE IF EXISTS `doctor_im_info`;
+CREATE TABLE `doctor_im_info`  (
+  `doctorImNo` int(10) NOT NULL AUTO_INCREMENT COMMENT '医生即时通信信息表编号',
+  `dno` int(10) DEFAULT NULL COMMENT '医生编号',
+  `accid` int(10) DEFAULT NULL COMMENT 'im登录通信证',
+  `token` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'im登录密码',
+  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  PRIMARY KEY (`doctorImNo`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of doctor_im_info
+-- ----------------------------
+INSERT INTO `doctor_im_info` VALUES (1, NULL, 102, '0298d529855cfe22880829bbdd150c74', NULL);
+INSERT INTO `doctor_im_info` VALUES (2, NULL, 104, '579b53ab97efb75c3c20214824fb7322', NULL);
+INSERT INTO `doctor_im_info` VALUES (3, NULL, 105, 'b20a03948ab16d56474756c0323d44a2', NULL);
+INSERT INTO `doctor_im_info` VALUES (4, NULL, 106, '37200266294190d295db72fe24b13dbb', NULL);
+INSERT INTO `doctor_im_info` VALUES (5, NULL, 107, '2aa6dca21408e6cf1ff64883a2aa337f', NULL);
+INSERT INTO `doctor_im_info` VALUES (6, NULL, 108, 'b0a8d92db78edd63a8d873a01e3e6701', NULL);
+INSERT INTO `doctor_im_info` VALUES (7, NULL, 109, '36071c0a24e38ccb8bd1d94be79a9304', NULL);
+INSERT INTO `doctor_im_info` VALUES (8, NULL, 112, '831713d8b80636a1325dd4db8a1f8256', NULL);
+INSERT INTO `doctor_im_info` VALUES (9, NULL, 113, 'f59012cfda849cd097014b992ee933b5', NULL);
+
+-- ----------------------------
 -- Table structure for duty
 -- ----------------------------
 DROP TABLE IF EXISTS `duty`;
 CREATE TABLE `duty`  (
   `dutyNo` int(10) NOT NULL AUTO_INCREMENT COMMENT '值班编号',
   `dno` int(11) NOT NULL COMMENT '医生编号',
-  `dutyDate` char(4) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '排班星期',
+  `dutyDate` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '排班星期',
   `timeSlotId` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '具体的排班时间段对应的id',
   PRIMARY KEY (`dutyNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of duty
 -- ----------------------------
-INSERT INTO `duty` VALUES (1, 101, '1', NULL);
-INSERT INTO `duty` VALUES (2, 102, '2', NULL);
-INSERT INTO `duty` VALUES (3, 103, '3', NULL);
-INSERT INTO `duty` VALUES (4, 101, '4', NULL);
+INSERT INTO `duty` VALUES (1, 101, 'Monday', '1');
+INSERT INTO `duty` VALUES (2, 101, 'Monday', '2');
+INSERT INTO `duty` VALUES (3, 101, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (4, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (5, 101, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (6, 101, 'Thursday', '1');
+INSERT INTO `duty` VALUES (7, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (8, 101, 'Friday', '2');
+INSERT INTO `duty` VALUES (9, 102, 'Monday', '2');
+INSERT INTO `duty` VALUES (10, 102, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (11, 102, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (12, 102, 'Friday', '1');
+INSERT INTO `duty` VALUES (13, 103, 'Monday', '1');
+INSERT INTO `duty` VALUES (14, 103, 'Money', '2');
+INSERT INTO `duty` VALUES (15, 103, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (16, 103, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (17, 103, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (18, 103, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (19, 103, 'Thursday', '2');
+INSERT INTO `duty` VALUES (20, 103, 'Friday', '1');
+INSERT INTO `duty` VALUES (21, 103, 'Friday', '2');
+INSERT INTO `duty` VALUES (22, 103, 'Saturday', '1');
+INSERT INTO `duty` VALUES (23, 103, 'Sunday', '1');
+INSERT INTO `duty` VALUES (24, 103, 'Sunday', '2');
+INSERT INTO `duty` VALUES (25, 101, 'Monday', '1');
+INSERT INTO `duty` VALUES (26, 101, 'Monday', '2');
+INSERT INTO `duty` VALUES (27, 101, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (28, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (29, 101, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (30, 101, 'Thursday', '1');
+INSERT INTO `duty` VALUES (31, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (32, 101, 'Friday', '2');
+INSERT INTO `duty` VALUES (33, 102, 'Monday', '2');
+INSERT INTO `duty` VALUES (34, 102, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (35, 102, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (36, 102, 'Friday', '1');
+INSERT INTO `duty` VALUES (37, 103, 'Monday', '1');
+INSERT INTO `duty` VALUES (38, 103, 'Money', '2');
+INSERT INTO `duty` VALUES (39, 103, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (40, 103, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (41, 103, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (42, 103, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (43, 103, 'Thursday', '2');
+INSERT INTO `duty` VALUES (44, 103, 'Friday', '1');
+INSERT INTO `duty` VALUES (45, 103, 'Friday', '2');
+INSERT INTO `duty` VALUES (46, 103, 'Saturday', '1');
+INSERT INTO `duty` VALUES (47, 103, 'Sunday', '1');
+INSERT INTO `duty` VALUES (48, 103, 'Sunday', '2');
+INSERT INTO `duty` VALUES (49, 101, 'Monday', '1');
+INSERT INTO `duty` VALUES (50, 101, 'Monday', '2');
+INSERT INTO `duty` VALUES (51, 101, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (52, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (53, 101, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (54, 101, 'Thursday', '1');
+INSERT INTO `duty` VALUES (55, 101, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (56, 101, 'Friday', '2');
+INSERT INTO `duty` VALUES (57, 102, 'Monday', '2');
+INSERT INTO `duty` VALUES (58, 102, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (59, 102, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (60, 102, 'Friday', '1');
+INSERT INTO `duty` VALUES (61, 103, 'Monday', '1');
+INSERT INTO `duty` VALUES (62, 103, 'Money', '2');
+INSERT INTO `duty` VALUES (63, 103, 'Tuesday', '1');
+INSERT INTO `duty` VALUES (64, 103, 'Tuesday', '2');
+INSERT INTO `duty` VALUES (65, 103, 'Wednesday', '1');
+INSERT INTO `duty` VALUES (66, 103, 'Wednesday', '2');
+INSERT INTO `duty` VALUES (67, 103, 'Thursday', '2');
+INSERT INTO `duty` VALUES (68, 103, 'Friday', '1');
+INSERT INTO `duty` VALUES (69, 103, 'Friday', '2');
+INSERT INTO `duty` VALUES (70, 103, 'Saturday', '1');
+INSERT INTO `duty` VALUES (71, 103, 'Sunday', '1');
+INSERT INTO `duty` VALUES (72, 103, 'Sunday', '2');
 
 -- ----------------------------
 -- Table structure for information
@@ -169,14 +310,14 @@ CREATE TABLE `information`  (
 -- Records of information
 -- ----------------------------
 INSERT INTO `information` VALUES (1, 1, '康复吧，少年', '少年行来', '那么无症状感染者是否会带来潜在的大规模传播风险？张文宏表示，这个传播风险是可以控制住的。“如果这么多无症状感染者不在早期被发现，随着时间推移，一定会出现有症状感染者。只不过这个时候会失去最佳控制时机，但这不代表我们控制不住。”\r\n\r\n“数据显示，世界上50%的病例是由无症状感染者传染的，整个社会上的传播，无症状感染者和有症状感染者各占一半。也就是说无论是无症状还是有症状，对我们来讲都要全面地进行控制。这并不意味着无症状感染者传染性更弱，也不代表无症状感染者更吓人。新疆喀什', '2020-10-06 18:27:04', 'w', '1.jpg', NULL);
-INSERT INTO `information` VALUES (2, 2, '康维明', '11', '北京协和医院基本外科\r\n\r\n主任医师，教授，博士生导师\r\n\r\n擅长：胃肠道肿瘤外科治疗、肥胖症及糖尿病手术治疗、甲状腺疾病及肠内肠外营养治疗等', '2020-11-08 13:40:38', '康维明', '4.png', NULL);
+INSERT INTO `information` VALUES (2, 2, '康维明', '11', '北京协和医院基本外科\r\n\r\n主任医师，教授，博士生导师\r\n\r\n擅长：胃肠道肿瘤外科治疗、肥胖症及糖尿病手术治疗、甲状腺疾病及肠内肠外营养治疗等', '2020-11-08 13:40:38', '康维明', '18.png', NULL);
 INSERT INTO `information` VALUES (3, 4, '华医网承办常见病管理学院直播会议', '0', '为深入贯彻落实党的十九大和《“健康中国”2030规划纲要》与《“十三五”卫生与健康规划》，持续提升基层服务能力，改善服务质量，有针对性的加强基层常见病、多发病的诊疗能力，使更多医务人员受益，促进分级诊疗制度的落实，同时使广大群众能够就近享有安全、有效、方便、经济的基本医疗卫生服务，华医网与北京医学奖励基金于2020年4月发起在线基层常见病规范化诊疗教育项目，面向基层多学科领域医务工作者开展。', '2020-11-07 13:40:41', '搜索', '7.jpg', NULL);
 INSERT INTO `information` VALUES (4, 3, '华医题库：职称考试全覆盖', '', '1. 覆盖广。高级职称题库就有109科、初中级职称题库118科，基本实现了全面覆盖。\r\n\r\n2. 更新快。每年的职称考试后，我们会增加历年真题；对于学员的纠错与反馈，不断修正内容；关于用户使用与操作问题，我们经常不定期更新。\r\n\r\n3. 终身有效。部分学员由于工作紧张、家庭琐事缠身等问题，不能及时练习或未能通过考试，华医题库可以终身免费使用，直到您考过为止。\r\n\r\n4. 实战模拟。针对目前越来越流行的人机对话考试，我们设计了模拟考场，让您在考试之前预先熟悉考试环境。', '2020-11-05 13:40:46', '嗷嗷', '4.jpg', NULL);
-INSERT INTO `information` VALUES (5, 2, '蔡军，主任医师、教授、博士生导师。', NULL, '蔡军，主任医师、教授、博士生导师。国家心血管病中心、中国医学科学院阜外医院高血压中心主任；海峡两岸医药卫生交流协会高血压专委会主任委员；中国医师协会高血压专委会副主任委员；中国医师协会心血管分会常委、高血压学组主任委员；中国医师协会高血压质控工作委员会主任委员；中国高血压中心认证工作委员会副主任委员兼秘书长；中华医学会心血管病学分会高血压学组委员；', '2020-11-08 16:13:18', '晒晒', '2.png', NULL);
+INSERT INTO `information` VALUES (5, 2, '蔡军，主任医师、教授、博士生导师。', NULL, '蔡军，主任医师、教授、博士生导师。国家心血管病中心、中国医学科学院阜外医院高血压中心主任；海峡两岸医药卫生交流协会高血压专委会主任委员；中国医师协会高血压专委会副主任委员；中国医师协会心血管分会常委、高血压学组主任委员；中国医师协会高血压质控工作委员会主任委员；中国高血压中心认证工作委员会副主任委员兼秘书长；中华医学会心血管病学分会高血压学组委员；', '2020-11-08 16:13:18', '晒晒', '16.png', NULL);
 INSERT INTO `information` VALUES (6, 1, '又新增1例！病毒从入境到被检出存活近20天，国务院出手了！', NULL, '从天津市防控指挥部获悉，11月9日，天津市新增1名无症状感染者，为货车司机，曾到本地11月8日新增的确诊病例所工作的滨海新区中新生态城海联冷库拉货。\r\n\r\n该男子曾于11月5日上午11时左右驾驶货车到中新天津生态城海联冷库装载冷链食品。该司机虽不属于冷库工作人员，但与涉事场所有关联，属于疾控部门排查的第二圈层。', '2020-11-11 11:02:15', '健康时报', '6.jpg', NULL);
 INSERT INTO `information` VALUES (7, 1, '原研与非原研，距离有多远 ——浅谈不同种类生物药品之间的差别', NULL, '编者按：生物制药在全球范围内应用广泛，近年，在科技进步、临床需求、医保控费及市场的多因素推动下，生物制药仿制品——生物类似物在抗肿瘤、抗风湿等多个领域的研发迅速走红。随着我国集采呈常态化发展趋势，这股浪潮终将冲击到糖尿病用药领域。但新事物发展越是处于热潮时期，就越需要客观冷静的思考和判断，生物类似物与原研药物之间的距离到底有多远？类似是否等同？经典生物药品胰岛素及其类似物会被取代吗？糖尿病生物药品市场未来格局走向如何？知其然，需知其所以然... ...', '2020-11-10 11:03:37', '战略支援部队特色医学中心 ', '5.jpg', NULL);
-INSERT INTO `information` VALUES (8, 2, '郁琦,主任医师，教授，博士研究生导师', NULL, '北京协和医院妇产科\r\n\r\n内分泌与生殖妇科中心主任兼妇产科学系副主任\r\n\r\n主任医师，教授，博士研究生导师\r\n\r\n擅长 : 不育、绝经、多囊卵巢综合征、各种妇科内分泌疾病', '2020-11-11 11:05:09', '郁琦', '1.png', NULL);
-INSERT INTO `information` VALUES (9, 2, '潘慧，医学博士，北京协和医院医务处处长，内分泌主任医师，博士生导师。', NULL, '主持或参与国自然等课题30余项，发表论文220余篇，其中SCI收录40余篇。现任中国医师协会住院医师规范化培训管理委员会副主任委员，师资培训组组长，中国医师协会毕业后教育专家委员会执行委员会副总干事长，中华医学会行为医学分会中国生长发育行为医学专业委员会主任委员，中国医院管理协会医院图书情报分会副主任委员，中国卫生摄影协会教育与科研分会主任委员，中国医师协会青春期医学专业委员会常委，学校健康学组组长，中华医学会内分泌学会垂体学组委员，中华医学会全科分会委员。', '2020-11-11 11:13:19', '潘慧', '3.jpg', NULL);
+INSERT INTO `information` VALUES (8, 2, '郁琦,主任医师，教授，博士研究生导师', NULL, '北京协和医院妇产科\r\n\r\n内分泌与生殖妇科中心主任兼妇产科学系副主任\r\n\r\n主任医师，教授，博士研究生导师\r\n\r\n擅长 : 不育、绝经、多囊卵巢综合征、各种妇科内分泌疾病', '2020-11-11 11:05:09', '郁琦', '17.png', NULL);
+INSERT INTO `information` VALUES (9, 2, '潘慧，医学博士，北京协和医院医务处处长，内分泌主任医师，博士生导师。', NULL, '主持或参与国自然等课题30余项，发表论文220余篇，其中SCI收录40余篇。现任中国医师协会住院医师规范化培训管理委员会副主任委员，师资培训组组长，中国医师协会毕业后教育专家委员会执行委员会副总干事长，中华医学会行为医学分会中国生长发育行为医学专业委员会主任委员，中国医院管理协会医院图书情报分会副主任委员，中国卫生摄影协会教育与科研分会主任委员，中国医师协会青春期医学专业委员会常委，学校健康学组组长，中华医学会内分泌学会垂体学组委员，中华医学会全科分会委员。', '2020-11-11 11:13:19', '潘慧', '15.png', NULL);
 INSERT INTO `information` VALUES (10, 1, '最新！抗新冠药物和疫苗的研发，有重大发现！', NULL, '中国科研团队近日在美国《科学》杂志在线发表论文说，他们发现了两种可有效阻断新冠病毒感染的人源单克隆抗体，有望用于抗新冠药物和疫苗的研发。\r\n\r\n中国首都医科大学、中国科学院微生物研究所、中国科学院天津工业生物技术研究所、深圳市第三人民医院等多家单位参与这项研究。\r\n\r\n分离出4种人源单克隆抗体\r\n\r\n研究人员从一名新冠康复患者的外周血单核细胞中分离出4种人源单克隆抗体。', '2020-09-16 11:16:39', '新华社', '2.jpg', NULL);
 INSERT INTO `information` VALUES (11, 3, '中医确有专长考试辅导班', NULL, '国家中医药管理局公布的《中医医术确有专长人员医师资格考核注册管理暂行办法》于 2017年12月20日起开始实施。按照该办法规定，通过中医医术确有专长人员医师资格考核即可获得《中医（专长）医师资格证书》，经注册可以合法执业。此《办法》的实施，对于众多民间中医或是有志于从事中医事业但因缺少学历而被拒之门外的人来说，如遇甘霖。这一政策的实施，将在瞬间点燃无法人的中医梦。', '2020-11-06 11:21:52', '华医网', '8.jpg', NULL);
 INSERT INTO `information` VALUES (12, 3, '临床执业医师无忧班', NULL, '特色1 名师划重点，邀请业内金牌讲师为大家突出重点，简化难点。\r\n\r\n特色2 碎片化学习，每日一练，充分利用碎片化时间，积少成多。\r\n\r\n特色3 测试，帮助您跳过容易，直达难点，补齐短板。\r\n\r\n本系列课包含纸质教材，请已购买学员联系华医班主任（hybzr002）领取及加入学习群。\r\n\r\n本系列课一次未通过，第二年免费重学。祝大家考试成功！', '2020-11-02 11:23:12', '华医网', '9.jpg', NULL);
@@ -244,19 +385,304 @@ DROP TABLE IF EXISTS `record`;
 CREATE TABLE `record`  (
   `recordNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '排班编号',
   `dno` int(11) DEFAULT NULL COMMENT '医生编号',
-  `worktime` int(11) DEFAULT NULL COMMENT '值班日期',
   `timeSlotId` int(10) DEFAULT NULL COMMENT '关联值班时间段表，一个医生在当天的值班记录最多有4条',
-  `Booking-numb` int(11) DEFAULT NULL COMMENT '剩余挂号量',
+  `Booking_numb` int(11) DEFAULT NULL COMMENT '剩余挂号量',
+  `dutyDate` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `dutyNo` int(20) DEFAULT NULL COMMENT '星期对应日期',
   PRIMARY KEY (`recordNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 293 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of record
 -- ----------------------------
-INSERT INTO `record` VALUES (1, 101, 1, 1, 1);
-INSERT INTO `record` VALUES (2, 102, 2, 2, 2);
-INSERT INTO `record` VALUES (3, 102, 1, 3, 0);
-INSERT INTO `record` VALUES (4, 103, 2, 4, 0);
+INSERT INTO `record` VALUES (5, 101, 1, 20, '2020-11-16', 1);
+INSERT INTO `record` VALUES (6, 101, 1, 20, '2020-11-23', NULL);
+INSERT INTO `record` VALUES (7, 101, 1, 20, '2020-11-30', NULL);
+INSERT INTO `record` VALUES (8, 101, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (9, 101, 2, 20, '2020-11-16', 2);
+INSERT INTO `record` VALUES (10, 101, 2, 20, '2020-11-23', NULL);
+INSERT INTO `record` VALUES (11, 101, 2, 20, '2020-11-30', NULL);
+INSERT INTO `record` VALUES (12, 101, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (13, 101, 1, 20, '2020-11-17', 3);
+INSERT INTO `record` VALUES (14, 101, 1, 20, '2020-11-24', NULL);
+INSERT INTO `record` VALUES (15, 101, 1, 20, '2020-12-01', NULL);
+INSERT INTO `record` VALUES (16, 101, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (17, 101, 2, 20, '2020-11-17', 4);
+INSERT INTO `record` VALUES (18, 101, 2, 20, '2020-11-24', NULL);
+INSERT INTO `record` VALUES (19, 101, 2, 20, '2020-12-01', NULL);
+INSERT INTO `record` VALUES (20, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (21, 101, 2, 20, '2020-11-18', 5);
+INSERT INTO `record` VALUES (22, 101, 2, 20, '2020-11-25', NULL);
+INSERT INTO `record` VALUES (23, 101, 2, 20, '2020-12-02', NULL);
+INSERT INTO `record` VALUES (24, 101, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (25, 101, 1, 20, '2020-11-19', 6);
+INSERT INTO `record` VALUES (26, 101, 1, 20, '2020-11-26', NULL);
+INSERT INTO `record` VALUES (27, 101, 1, 20, '2020-12-03', NULL);
+INSERT INTO `record` VALUES (28, 101, 1, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (29, 101, 2, 20, '2020-11-17', 7);
+INSERT INTO `record` VALUES (30, 101, 2, 20, '2020-11-24', NULL);
+INSERT INTO `record` VALUES (31, 101, 2, 20, '2020-12-01', NULL);
+INSERT INTO `record` VALUES (32, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (33, 101, 2, 20, '2020-11-20', 8);
+INSERT INTO `record` VALUES (34, 101, 2, 20, '2020-11-27', NULL);
+INSERT INTO `record` VALUES (35, 101, 2, 20, '2020-12-04', NULL);
+INSERT INTO `record` VALUES (36, 101, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (37, 102, 2, 20, '2020-11-16', 9);
+INSERT INTO `record` VALUES (38, 102, 2, 20, '2020-11-23', NULL);
+INSERT INTO `record` VALUES (39, 102, 2, 20, '2020-11-30', NULL);
+INSERT INTO `record` VALUES (40, 102, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (41, 102, 1, 20, '2020-11-18', 10);
+INSERT INTO `record` VALUES (42, 102, 1, 20, '2020-11-25', NULL);
+INSERT INTO `record` VALUES (43, 102, 1, 20, '2020-12-02', NULL);
+INSERT INTO `record` VALUES (44, 102, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (45, 102, 2, 20, '2020-11-18', 11);
+INSERT INTO `record` VALUES (46, 102, 2, 20, '2020-11-25', NULL);
+INSERT INTO `record` VALUES (47, 102, 2, 20, '2020-12-02', NULL);
+INSERT INTO `record` VALUES (48, 102, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (49, 102, 1, 20, '2020-11-20', 12);
+INSERT INTO `record` VALUES (50, 102, 1, 20, '2020-11-27', NULL);
+INSERT INTO `record` VALUES (51, 102, 1, 20, '2020-12-04', NULL);
+INSERT INTO `record` VALUES (52, 102, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (53, 103, 1, 20, '2020-11-16', 13);
+INSERT INTO `record` VALUES (54, 103, 1, 20, '2020-11-23', NULL);
+INSERT INTO `record` VALUES (55, 103, 1, 20, '2020-11-30', NULL);
+INSERT INTO `record` VALUES (56, 103, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (57, 103, 2, 20, NULL, 14);
+INSERT INTO `record` VALUES (58, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (59, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (60, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (61, 103, 1, 20, '2020-11-17', 15);
+INSERT INTO `record` VALUES (62, 103, 1, 20, '2020-11-24', NULL);
+INSERT INTO `record` VALUES (63, 103, 1, 20, '2020-12-01', NULL);
+INSERT INTO `record` VALUES (64, 103, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (65, 103, 2, 20, '2020-11-17', 16);
+INSERT INTO `record` VALUES (66, 103, 2, 20, '2020-11-24', NULL);
+INSERT INTO `record` VALUES (67, 103, 2, 20, '2020-12-01', NULL);
+INSERT INTO `record` VALUES (68, 103, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (69, 103, 1, 20, '2020-11-18', 17);
+INSERT INTO `record` VALUES (70, 103, 1, 20, '2020-11-25', NULL);
+INSERT INTO `record` VALUES (71, 103, 1, 20, '2020-12-02', NULL);
+INSERT INTO `record` VALUES (72, 103, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (73, 103, 2, 20, '2020-11-18', 18);
+INSERT INTO `record` VALUES (74, 103, 2, 20, '2020-11-25', NULL);
+INSERT INTO `record` VALUES (75, 103, 2, 20, '2020-12-02', NULL);
+INSERT INTO `record` VALUES (76, 103, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (77, 103, 2, 20, '2020-11-19', 19);
+INSERT INTO `record` VALUES (78, 103, 2, 20, '2020-11-26', NULL);
+INSERT INTO `record` VALUES (79, 103, 2, 20, '2020-12-03', NULL);
+INSERT INTO `record` VALUES (80, 103, 2, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (81, 103, 1, 20, '2020-11-20', 20);
+INSERT INTO `record` VALUES (82, 103, 1, 20, '2020-11-27', NULL);
+INSERT INTO `record` VALUES (83, 103, 1, 20, '2020-12-04', NULL);
+INSERT INTO `record` VALUES (84, 103, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (85, 103, 2, 20, '2020-11-20', 21);
+INSERT INTO `record` VALUES (86, 103, 2, 20, '2020-11-27', NULL);
+INSERT INTO `record` VALUES (87, 103, 2, 20, '2020-12-04', NULL);
+INSERT INTO `record` VALUES (88, 103, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (89, 103, 1, 20, '2020-11-21', 22);
+INSERT INTO `record` VALUES (90, 103, 1, 20, '2020-11-28', NULL);
+INSERT INTO `record` VALUES (91, 103, 1, 20, '2020-12-05', NULL);
+INSERT INTO `record` VALUES (92, 103, 1, 20, '2020-12-12', NULL);
+INSERT INTO `record` VALUES (93, 103, 1, 20, '2020-11-15', 23);
+INSERT INTO `record` VALUES (94, 103, 1, 20, '2020-11-22', NULL);
+INSERT INTO `record` VALUES (95, 103, 1, 20, '2020-11-29', NULL);
+INSERT INTO `record` VALUES (96, 103, 1, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (97, 103, 2, 20, '2020-11-15', 24);
+INSERT INTO `record` VALUES (98, 103, 2, 20, '2020-11-22', NULL);
+INSERT INTO `record` VALUES (99, 103, 2, 20, '2020-11-29', NULL);
+INSERT INTO `record` VALUES (100, 103, 2, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (101, 101, 1, 20, '2020-11-30', 25);
+INSERT INTO `record` VALUES (102, 101, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (103, 101, 1, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (104, 101, 1, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (105, 101, 2, 20, '2020-11-30', 26);
+INSERT INTO `record` VALUES (106, 101, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (107, 101, 2, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (108, 101, 2, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (109, 101, 1, 20, '2020-12-01', 27);
+INSERT INTO `record` VALUES (110, 101, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (111, 101, 1, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (112, 101, 1, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (113, 101, 2, 20, '2020-12-01', 28);
+INSERT INTO `record` VALUES (114, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (115, 101, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (116, 101, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (117, 101, 2, 20, '2020-12-02', 29);
+INSERT INTO `record` VALUES (118, 101, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (119, 101, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (120, 101, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (121, 101, 1, 20, '2020-12-03', 30);
+INSERT INTO `record` VALUES (122, 101, 1, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (123, 101, 1, 20, '2020-12-17', NULL);
+INSERT INTO `record` VALUES (124, 101, 1, 20, '2020-12-24', NULL);
+INSERT INTO `record` VALUES (125, 101, 2, 20, '2020-12-01', 31);
+INSERT INTO `record` VALUES (126, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (127, 101, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (128, 101, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (129, 101, 2, 20, '2020-12-04', 32);
+INSERT INTO `record` VALUES (130, 101, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (131, 101, 2, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (132, 101, 2, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (133, 102, 2, 20, '2020-11-30', 33);
+INSERT INTO `record` VALUES (134, 102, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (135, 102, 2, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (136, 102, 2, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (137, 102, 1, 20, '2020-12-02', 34);
+INSERT INTO `record` VALUES (138, 102, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (139, 102, 1, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (140, 102, 1, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (141, 102, 2, 20, '2020-12-02', 35);
+INSERT INTO `record` VALUES (142, 102, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (143, 102, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (144, 102, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (145, 102, 1, 20, '2020-12-04', 36);
+INSERT INTO `record` VALUES (146, 102, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (147, 102, 1, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (148, 102, 1, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (149, 103, 1, 20, '2020-11-30', 37);
+INSERT INTO `record` VALUES (150, 103, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (151, 103, 1, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (152, 103, 1, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (153, 103, 2, 20, NULL, 38);
+INSERT INTO `record` VALUES (154, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (155, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (156, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (157, 103, 1, 20, '2020-12-01', 39);
+INSERT INTO `record` VALUES (158, 103, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (159, 103, 1, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (160, 103, 1, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (161, 103, 2, 20, '2020-12-01', 40);
+INSERT INTO `record` VALUES (162, 103, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (163, 103, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (164, 103, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (165, 103, 1, 20, '2020-12-02', 41);
+INSERT INTO `record` VALUES (166, 103, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (167, 103, 1, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (168, 103, 1, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (169, 103, 2, 20, '2020-12-02', 42);
+INSERT INTO `record` VALUES (170, 103, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (171, 103, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (172, 103, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (173, 103, 2, 20, '2020-12-03', 43);
+INSERT INTO `record` VALUES (174, 103, 2, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (175, 103, 2, 20, '2020-12-17', NULL);
+INSERT INTO `record` VALUES (176, 103, 2, 20, '2020-12-24', NULL);
+INSERT INTO `record` VALUES (177, 103, 1, 20, '2020-12-04', 44);
+INSERT INTO `record` VALUES (178, 103, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (179, 103, 1, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (180, 103, 1, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (181, 103, 2, 20, '2020-12-04', 45);
+INSERT INTO `record` VALUES (182, 103, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (183, 103, 2, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (184, 103, 2, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (185, 103, 1, 20, '2020-12-05', 46);
+INSERT INTO `record` VALUES (186, 103, 1, 20, '2020-12-12', NULL);
+INSERT INTO `record` VALUES (187, 103, 1, 20, '2020-12-19', NULL);
+INSERT INTO `record` VALUES (188, 103, 1, 20, '2020-12-26', NULL);
+INSERT INTO `record` VALUES (189, 103, 1, 20, '2020-11-29', 47);
+INSERT INTO `record` VALUES (190, 103, 1, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (191, 103, 1, 20, '2020-12-13', NULL);
+INSERT INTO `record` VALUES (192, 103, 1, 20, '2020-12-20', NULL);
+INSERT INTO `record` VALUES (193, 103, 2, 20, '2020-11-29', 48);
+INSERT INTO `record` VALUES (194, 103, 2, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (195, 103, 2, 20, '2020-12-13', NULL);
+INSERT INTO `record` VALUES (196, 103, 2, 20, '2020-12-20', NULL);
+INSERT INTO `record` VALUES (197, 101, 1, 20, '2020-11-30', 49);
+INSERT INTO `record` VALUES (198, 101, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (199, 101, 1, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (200, 101, 1, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (201, 101, 2, 20, '2020-11-30', 50);
+INSERT INTO `record` VALUES (202, 101, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (203, 101, 2, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (204, 101, 2, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (205, 101, 1, 20, '2020-12-01', 51);
+INSERT INTO `record` VALUES (206, 101, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (207, 101, 1, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (208, 101, 1, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (209, 101, 2, 20, '2020-12-01', 52);
+INSERT INTO `record` VALUES (210, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (211, 101, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (212, 101, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (213, 101, 2, 20, '2020-12-02', 53);
+INSERT INTO `record` VALUES (214, 101, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (215, 101, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (216, 101, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (217, 101, 1, 20, '2020-12-03', 54);
+INSERT INTO `record` VALUES (218, 101, 1, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (219, 101, 1, 20, '2020-12-17', NULL);
+INSERT INTO `record` VALUES (220, 101, 1, 20, '2020-12-24', NULL);
+INSERT INTO `record` VALUES (221, 101, 2, 20, '2020-12-01', 55);
+INSERT INTO `record` VALUES (222, 101, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (223, 101, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (224, 101, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (225, 101, 2, 20, '2020-12-04', 56);
+INSERT INTO `record` VALUES (226, 101, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (227, 101, 2, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (228, 101, 2, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (229, 102, 2, 20, '2020-11-30', 57);
+INSERT INTO `record` VALUES (230, 102, 2, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (231, 102, 2, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (232, 102, 2, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (233, 102, 1, 20, '2020-12-02', 58);
+INSERT INTO `record` VALUES (234, 102, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (235, 102, 1, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (236, 102, 1, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (237, 102, 2, 20, '2020-12-02', 59);
+INSERT INTO `record` VALUES (238, 102, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (239, 102, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (240, 102, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (241, 102, 1, 20, '2020-12-04', 60);
+INSERT INTO `record` VALUES (242, 102, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (243, 102, 1, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (244, 102, 1, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (245, 103, 1, 20, '2020-11-30', 61);
+INSERT INTO `record` VALUES (246, 103, 1, 20, '2020-12-07', NULL);
+INSERT INTO `record` VALUES (247, 103, 1, 20, '2020-12-14', NULL);
+INSERT INTO `record` VALUES (248, 103, 1, 20, '2020-12-21', NULL);
+INSERT INTO `record` VALUES (249, 103, 2, 20, NULL, 62);
+INSERT INTO `record` VALUES (250, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (251, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (252, 103, 2, 20, NULL, NULL);
+INSERT INTO `record` VALUES (253, 103, 1, 20, '2020-12-01', 63);
+INSERT INTO `record` VALUES (254, 103, 1, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (255, 103, 1, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (256, 103, 1, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (257, 103, 2, 20, '2020-12-01', 64);
+INSERT INTO `record` VALUES (258, 103, 2, 20, '2020-12-08', NULL);
+INSERT INTO `record` VALUES (259, 103, 2, 20, '2020-12-15', NULL);
+INSERT INTO `record` VALUES (260, 103, 2, 20, '2020-12-22', NULL);
+INSERT INTO `record` VALUES (261, 103, 1, 20, '2020-12-02', 65);
+INSERT INTO `record` VALUES (262, 103, 1, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (263, 103, 1, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (264, 103, 1, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (265, 103, 2, 20, '2020-12-02', 66);
+INSERT INTO `record` VALUES (266, 103, 2, 20, '2020-12-09', NULL);
+INSERT INTO `record` VALUES (267, 103, 2, 20, '2020-12-16', NULL);
+INSERT INTO `record` VALUES (268, 103, 2, 20, '2020-12-23', NULL);
+INSERT INTO `record` VALUES (269, 103, 2, 20, '2020-12-03', 67);
+INSERT INTO `record` VALUES (270, 103, 2, 20, '2020-12-10', NULL);
+INSERT INTO `record` VALUES (271, 103, 2, 20, '2020-12-17', NULL);
+INSERT INTO `record` VALUES (272, 103, 2, 20, '2020-12-24', NULL);
+INSERT INTO `record` VALUES (273, 103, 1, 20, '2020-12-04', 68);
+INSERT INTO `record` VALUES (274, 103, 1, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (275, 103, 1, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (276, 103, 1, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (277, 103, 2, 20, '2020-12-04', 69);
+INSERT INTO `record` VALUES (278, 103, 2, 20, '2020-12-11', NULL);
+INSERT INTO `record` VALUES (279, 103, 2, 20, '2020-12-18', NULL);
+INSERT INTO `record` VALUES (280, 103, 2, 20, '2020-12-25', NULL);
+INSERT INTO `record` VALUES (281, 103, 1, 20, '2020-12-05', 70);
+INSERT INTO `record` VALUES (282, 103, 1, 20, '2020-12-12', NULL);
+INSERT INTO `record` VALUES (283, 103, 1, 20, '2020-12-19', NULL);
+INSERT INTO `record` VALUES (284, 103, 1, 20, '2020-12-26', NULL);
+INSERT INTO `record` VALUES (285, 103, 1, 20, '2020-11-29', 71);
+INSERT INTO `record` VALUES (286, 103, 1, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (287, 103, 1, 20, '2020-12-13', NULL);
+INSERT INTO `record` VALUES (288, 103, 1, 20, '2020-12-20', NULL);
+INSERT INTO `record` VALUES (289, 103, 2, 20, '2020-11-29', 72);
+INSERT INTO `record` VALUES (290, 103, 2, 20, '2020-12-06', NULL);
+INSERT INTO `record` VALUES (291, 103, 2, 20, '2020-12-13', NULL);
+INSERT INTO `record` VALUES (292, 103, 2, 20, '2020-12-20', NULL);
 
 -- ----------------------------
 -- Table structure for room
@@ -265,10 +691,10 @@ DROP TABLE IF EXISTS `room`;
 CREATE TABLE `room`  (
   `roomNo` int(10) NOT NULL AUTO_INCREMENT COMMENT '科室编号',
   `roomName` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '室名称',
-  `RoomDescribe` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科室描述',
+  `RoomDescribe` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科室描述',
   `sectionNo` int(11) DEFAULT NULL COMMENT '科编号',
   PRIMARY KEY (`roomNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 119 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of room
@@ -417,7 +843,7 @@ INSERT INTO `rotation` VALUES (4, '4.png', '44', '2020-11-06 21:23:37');
 DROP TABLE IF EXISTS `section`;
 CREATE TABLE `section`  (
   `sectionNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '科编号',
-  `sectionName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科名称',
+  `sectionName` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '科名称',
   PRIMARY KEY (`sectionNo`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
@@ -444,35 +870,20 @@ INSERT INTO `section` VALUES (17, '医学影像科');
 INSERT INTO `section` VALUES (18, '其他科室');
 
 -- ----------------------------
--- Table structure for subscribe
--- ----------------------------
-DROP TABLE IF EXISTS `subscribe`;
-CREATE TABLE `subscribe`  (
-  `subscribeNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '订单编号',
-  `usno` int(11) DEFAULT NULL COMMENT '用户编号',
-  `dno` int(11) DEFAULT NULL COMMENT '医生编号',
-  `state` int(2) DEFAULT NULL COMMENT '支付状态',
-  `startTime` datetime DEFAULT NULL COMMENT '创建时间',
-  `endTime` datetime DEFAULT NULL COMMENT '关闭时间',
-  PRIMARY KEY (`subscribeNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of subscribe
--- ----------------------------
-INSERT INTO `subscribe` VALUES (1, 1, 101, 1, '2020-10-14 22:10:04', '2020-10-15 01:03:59');
-INSERT INTO `subscribe` VALUES (2, 2, 102, 0, '2020-10-14 22:10:08', '2020-10-15 01:04:06');
-INSERT INTO `subscribe` VALUES (3, 1, 103, 0, '2020-10-21 22:10:12', '2020-10-22 01:04:10');
-
--- ----------------------------
 -- Table structure for timeslot
 -- ----------------------------
 DROP TABLE IF EXISTS `timeslot`;
 CREATE TABLE `timeslot`  (
   `timeSlotId` int(11) NOT NULL COMMENT '时间段表设4条记录',
-  `timeSlotRange` varchar(0) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '具体时间段的范围（8:00-10:00，14:00-16:00....）',
+  `timeSlotRange` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '具体时间段的范围（8:00-10:00，14:00-16:00....）',
   PRIMARY KEY (`timeSlotId`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of timeslot
+-- ----------------------------
+INSERT INTO `timeslot` VALUES (1, '上午');
+INSERT INTO `timeslot` VALUES (2, '下午');
 
 -- ----------------------------
 -- Table structure for user
@@ -481,18 +892,213 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
   `userNo` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户编号',
   `userName` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户名',
-  `passWord` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '密码',
+  `passWord` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '密码',
   `sex` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '性别',
   `idCardNumber` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '身份证号码',
   `socialCard` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '社保卡号',
   `phoneNumber` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机号',
   PRIMARY KEY (`userNo`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (3, NULL, 'c12345', NULL, NULL, NULL, '13469860227');
-INSERT INTO `user` VALUES (6, NULL, 'aaaa123', NULL, NULL, NULL, '18527309692');
+INSERT INTO `user` VALUES (16, '凤飞飞', 'aaaa123', '女', '666666666666666666', '666666666666666666', '18527309692');
+INSERT INTO `user` VALUES (19, NULL, 'z12345', NULL, NULL, NULL, '13469860227');
+INSERT INTO `user` VALUES (20, '凤飞飞', 'z12345', '女', '422826199805083214', '422826199805083214', '18589932455');
+
+-- ----------------------------
+-- Table structure for user_im_info
+-- ----------------------------
+DROP TABLE IF EXISTS `user_im_info`;
+CREATE TABLE `user_im_info`  (
+  `userIMNo` int(10) NOT NULL AUTO_INCREMENT,
+  `userNo` int(20) DEFAULT NULL,
+  `accid` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `token` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  PRIMARY KEY (`userIMNo`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of user_im_info
+-- ----------------------------
+INSERT INTO `user_im_info` VALUES (1, NULL, '1a', '90f3a6df19df9152f6cef954107aa59f', '1a');
+INSERT INTO `user_im_info` VALUES (2, NULL, '1acc', 'ec4c35f1cf5c944ccd35cb6dbd6f829d', '1acc');
+INSERT INTO `user_im_info` VALUES (3, NULL, '18527309692', '15cf81141f769f0ea43eb255608f888c', '18527309692');
+INSERT INTO `user_im_info` VALUES (4, NULL, '13469860227', 'c5e53a33cb6f9fce518a2b44ee0b52f3', '13469860227');
+INSERT INTO `user_im_info` VALUES (5, NULL, '18589932455', 'ad5bb6e62142862618b0a594ab02caa3', '18589932455');
+
+-- ----------------------------
+-- Procedure structure for conv_weekday
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `conv_weekday`;
+delimiter ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `conv_weekday`(`wkd` VARCHAR(20),`dutyNos` INT(10))
+BEGIN
+
+-- 获取当前年份周
+  SET @str=(SELECT YEARWEEK(NOW())) ; 
+-- 	拼接年份周和星期
+	SET @sourceStr=CONCAT(@str,wkd);	
+	
+-- 	使用STR_TO_DATE（）转换成对应日期
+	SET @strDate= (SELECT STR_TO_DATE(@sourceStr , '%X%V %W'));
+-- 		将record表的dutyDate值修改为日期类型表示
+	UPDATE `record` SET dutyDate=@strDate WHERE dutyNo=dutyNos;
+	
+	
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Procedure structure for insert_data
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `insert_data`;
+delimiter ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_data`(`wkd` VARCHAR(20),`dno` VARCHAR(20),`timeSlotId` VARCHAR(20))
+BEGIN
+
+-- 定义变量
+    DECLARE v_i int unsigned DEFAULT 1;
+	
+    WHILE v_i < 4 DO
+					
+			SET @str=(SELECT YEARWEEK(NOW()))+v_i ; 
+			-- 	拼接年份周和星期
+			SET @sourceStr=CONCAT(@str,wkd);	
+		   -- 	使用STR_TO_DATE（）转换成对应日期
+			SET @strDate= (SELECT STR_TO_DATE(@sourceStr , '%X%V %W'));
+			
+      insert into record(dno,timeSlotId,dutyDate) VALUES(dno,timeSlotId,@strDate); 
+		  SET v_i = v_i+1;
+      
+    END WHILE;
+
+	
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Procedure structure for update_data
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `update_data`;
+delimiter ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_data`(`id` INT(20))
+BEGIN
+
+-- 查询修改的值班日期
+-- @d:2020-11-20
+		set @d=(SELECT dutyDate    FROM record WHERE recordNo = id)	;
+		
+-- @d1:2020-11-27		
+		set @d1=(SELECT  DATE_ADD(@d,INTERVAL 7 DAY))	;	
+-- @r1:52				
+		set @r1=(SELECT `recordNo`    FROM record WHERE recordNo > id LIMIT 1)	;
+-- 将日期重新换算成周		@w1：202047
+		set  @w1=(SELECT YEARWEEK(@d1));
+-- 		将从数据库获取的日期类型值转换成英文表示的星期 @e_w1=Friday
+		set @e_w1=(select DAYNAME(@d1));
+
+-- 重新	拼接年份周和星期
+--  @sourceStr1=202047Friday
+	SET @sourceStr1=CONCAT(@w1,@e_w1);		
+-- 	使用STR_TO_DATE（）转换成对应日期
+	SET @strDate1= (SELECT STR_TO_DATE(@sourceStr1 , '%X%V %W'));
+ UPDATE `record` SET dutyDate=@strDate1 WHERE recordNo=@r1 ;
+-- 
+-- -- 		-----------------------------------------------------------------------------------------------------------------
+		
+-- @d1:2020-11-27		
+		set @d2=(SELECT  DATE_ADD(@d1,INTERVAL 7 DAY))	;	
+-- @r1:52				
+		set @r2=(SELECT `recordNo`    FROM record WHERE recordNo > @r1 LIMIT 1)	;
+-- 将日期重新换算成周		@w1：202047
+		set  @w2=(SELECT YEARWEEK(@d2));
+-- 		将从数据库获取的日期类型值转换成英文表示的星期 @e_w1=Friday
+		set @e_w2=(select DAYNAME(@d2));
+
+-- 重新	拼接年份周和星期
+--  @sourceStr1=202047Friday
+	SET @sourceStr2=CONCAT(@w2,@e_w2);		
+-- 	使用STR_TO_DATE（）转换成对应日期
+	SET @strDate2= (SELECT STR_TO_DATE(@sourceStr2 , '%X%V %W'));
+ UPDATE `record` SET dutyDate=@strDate2 WHERE recordNo=@r2 ;
+-- 
+-- -- 		-----------------------------------------------------------------------------------------------------------------
+-- @d1:2020-11-27		
+		set @d3=(SELECT  DATE_ADD(@d2,INTERVAL 7 DAY))	;	
+-- @r1:52				
+		set @r3=(SELECT `recordNo`    FROM record WHERE recordNo > @r2 LIMIT 1)	;
+-- 将日期重新换算成周		@w1：202047
+		set  @w3=(SELECT YEARWEEK(@d3));
+-- 		将从数据库获取的日期类型值转换成英文表示的星期 @e_w1=Friday
+		set @e_w3=(select DAYNAME(@d3));
+
+-- 重新	拼接年份周和星期
+--  @sourceStr1=202047Friday
+	SET @sourceStr3=CONCAT(@w3,@e_w3);		
+-- 	使用STR_TO_DATE（）转换成对应日期
+	SET @strDate3= (SELECT STR_TO_DATE(@sourceStr3 , '%X%V %W'));
+ UPDATE `record` SET dutyDate=@strDate3 WHERE recordNo=@r3 ;
+-- 
+
+
+-- -- 		-----------------------------------------------------------------------------------------------------------------
+-- @d1:2020-11-27		
+		set @d4=(SELECT  DATE_ADD(@d3,INTERVAL 7 DAY))	;	
+-- @r1:52				
+		set @r4=(SELECT `recordNo`    FROM record WHERE recordNo > @r3 LIMIT 1)	;
+-- 将日期重新换算成周		@w1：202047
+		set  @w4=(SELECT YEARWEEK(@d4));
+-- 		将从数据库获取的日期类型值转换成英文表示的星期 @e_w1=Friday
+		set @e_w4=(select DAYNAME(@d4));
+
+-- 重新	拼接年份周和星期
+--  @sourceStr1=202047Friday
+	SET @sourceStr4=CONCAT(@w4,@e_w4);		
+-- 	使用STR_TO_DATE（）转换成对应日期
+	SET @strDate4= (SELECT STR_TO_DATE(@sourceStr4 , '%X%V %W'));
+ UPDATE `record` SET dutyDate=@strDate4 WHERE recordNo=@r4 ;
+-- 
+	
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table duty
+-- ----------------------------
+DROP TRIGGER IF EXISTS `sychronization_record_addinfo`;
+delimiter ;;
+CREATE DEFINER = `root`@`localhost` TRIGGER `sychronization_record_addinfo` AFTER INSERT ON `duty` FOR EACH ROW BEGIN
+	insert into record(dno,dutyNo,timeSlotId,dutyDate) VALUES(new.dno,new.dutyNo,new.timeSlotId,new.dutyDate);
+	select new.dutyDate INTO @dweek ;
+	select new.dutyNo INTO @did ;
+	select new.dno INTO @dno ;
+	select new.timeSlotId INTO @timeSlotId ;
+	call conv_weekday(@dweek,@did);
+	call insert_data(@dweek,@dno,@timeSlotId);
+END
+;;
+delimiter ;
+
+-- ----------------------------
+-- Triggers structure for table duty
+-- ----------------------------
+DROP TRIGGER IF EXISTS `update_record`;
+delimiter ;;
+CREATE DEFINER = `root`@`localhost` TRIGGER `update_record` AFTER UPDATE ON `duty` FOR EACH ROW BEGIN
+update record  set  timeSlotId=new.timeSlotId ,dutyDate=new.dutyDate  where record.dutyNo=new.dutyNo;
+	select new.dutyDate INTO @dweek ;
+	select new.dutyNo INTO @did ;
+	select recordNo INTO @rid FROM record where record.dutyNo=new.dutyNo;
+	call conv_weekday(@dweek,@did);
+	call update_data(@rid);
+END
+;;
+delimiter ;
 
 SET FOREIGN_KEY_CHECKS = 1;
