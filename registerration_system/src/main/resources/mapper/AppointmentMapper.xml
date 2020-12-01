@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.AppointmentMapper">
+	
+
+    
+    <resultMap type="com.sesame.pojo.Record" id="AppointmentMap">
+    	<id column="recordNo" property="recordNo"/>
+ 	     <result column="dno" property="dno"/>
+ 	     <result column="Booking_numb" property="Booking_numb"/>
+ 	     <result column="dutyDate" property="dutyDate"/>
+ 	     <result column="dutyNo" property="dutyNo"/>
+ 	     <association property="timeSlot" javaType="com.sesame.pojo.TimeSlot">
+	 	     <id column="timeSlotId" property="timeSlotId"/>
+	 	     <result column="timeSlotRange" property="timeSlotRange"/>
+ 	     </association>
+    </resultMap>
+
+	<!-- 
+		//通过医生id查询以当天日期为准的 往后7天的排班记录
+		public List<Record> selectDutyRecordByid(Integer id);
+	 -->
+	 <select id="selectDutyRecordByid" resultMap="AppointmentMap">
+	 	SELECT r.recordNo,r.dutyNo,r.dno,r.`Booking_numb`,r.dutyDate,t.timeSlotRange
+	 	FROM record r ,timeslot t
+		WHERE r.timeSlotId = t.timeSlotId   
+		and r.dutyDate  BETWEEN CURDATE() AND  DATE_ADD(CURDATE(),INTERVAL 6 DAY)
+		and dno=#{dno}
+		ORDER BY r.dutyDate
+	 </select>
+	 
+	 <!--  
+	 	//修改预约量
+		public Integer updateCount(Integer recordNo);
+	 -->
+	 <update id="updateCount">
+	 	update record SET Booking_numb=#{Booking_numb}
+	 </update>
+	 
+	 <!-- 
+	 	//查询预约量
+		public Integer selectCount(Integer recordNo);
+		
+	  -->
+	  <select id="selectCount">
+	  	select Booking_numb from record
+	  </select>
+
+</mapper>

@@ -10,7 +10,22 @@
     <result column="grade" jdbcType="VARCHAR" property="grade" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
     <result column="picture" jdbcType="VARCHAR" property="picture" />
+
+    <association property="chargeType" javaType="com.sesame.pojo.ChargeType">
+      <id column="priceTypeNo" property="priceTypeNo"/>
+      <result column="priceTypeName" property="priceTypeName"/>
+    </association>
+    <association property="charge" javaType="com.sesame.pojo.Charge">
+      <id column="chargeNo" property="chargeNo"/>
+      <result column="grade" property="grade"/>
+      <result column="fee" property="fee"/>
+      <result column="priceTypeNo" property="priceTypeNo"/>
+    </association>
+
   </resultMap>
+  
+  
+  
   <sql id="Base_Column_List">
     dno, dname, sex, roomNo, rank, grade, `describe`, picture
   </sql>
@@ -20,10 +35,16 @@
     Doctor selectByPrimaryKey(Integer dno);
   -->
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    <!--select
     <include refid="Base_Column_List" />
     from doctor
-    where dno = #{dno,jdbcType=INTEGER}
+    where dno = #{dno,jdbcType=INTEGER}-->
+
+    select d.dno, d.dname, d.sex, d.roomNo, d.rank, d.grade, d.describe, d.picture, c.fee , ct.priceTypeName
+    from doctor d
+    JOIN charge c ON d.grade = c.grade
+    JOIN charge_type ct ON ct.priceTypeNo = c.priceTypeNo
+    where d.dno=#{dno,jdbcType=INTEGER} and ct.priceTypeNo = 1
   </select>
 
   <!--
@@ -35,5 +56,15 @@
     <include refid="Base_Column_List" />
     from doctor
     where roomNo = #{roomno,jdbcType=INTEGER}
+  </select>
+  
+  <!--  
+  		//查询所有医生
+    List<Doctor> selectAllDoc();
+  -->
+  <select id="selectAllDoc" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from doctor limit 2
   </select>
 </mapper>

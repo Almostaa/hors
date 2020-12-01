@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.ApptinfoMapper">
+  <resultMap id="BaseResultMap" type="com.sesame.pojo.Apptinfo">
+    <id column="apptNo" jdbcType="INTEGER" property="apptno" />
+    <result column="usno" jdbcType="INTEGER" property="usno" />
+    <result column="dno" jdbcType="INTEGER" property="dno" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="overTime" jdbcType="TIMESTAMP" property="overtime" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="apptDate" jdbcType="DATE" property="apptdate" />
+    <result column="apptTime" jdbcType="VARCHAR" property="appttime" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="dName" jdbcType="VARCHAR" property="dName" />
+    <result column="userName" jdbcType="VARCHAR" property="userName" />
+    <result column="idCardNumber" jdbcType="VARCHAR" property="idCardNumber" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="roomName" jdbcType="VARCHAR" property="roomName" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    apptNo, usno, dno, state, createTime, overTime, price, apptDate, apptTime
+  </sql>
+  <select id="selectALLByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT i.apptNo,r.roomName,d.dName,u.userName,u.sex,u.idCardNumber,i.apptDate,i.apptTime,u.phoneNumber,i.price,i.state
+        FROM  doctor d
+        LEFT JOIN room r on d.roomNo=r.roomNo
+        LEFT JOIN `apptInfo` i on i.dno=d.dno
+        LEFT JOIN `user` u on u.userNo=i.usno
+        where i.usno=#{usno,jdbcType=INTEGER} order by i.apptDate desc
+    </select>
+<!--
+   /*
+    * @author sfda
+    * 确认订单后插入数据
+    * */
+    Integer insertOrder(Apptinfo apptinfo);
+-->
+
+  <insert id="insertOrder" useGeneratedKeys="true" keyProperty="apptno" parameterType="com.sesame.pojo.Apptinfo">
+    insert into apptinfo (usno, dno,
+      state, createTime,
+      price, apptDate, apptTime
+      )
+    values (#{usno,jdbcType=INTEGER}, #{dno,jdbcType=INTEGER},
+      0, now(),
+      #{price,jdbcType=DECIMAL}, #{apptdate,jdbcType=DATE}, #{appttime,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <!--
+    /*
+     * @author sfda
+     * 支付成功后更新状态码
+     * */
+  -->
+  <update id="updateOrder" parameterType="com.sesame.pojo.Apptinfo">
+    update apptinfo
+    set
+      state = 1,
+      overTime = now()
+    where apptNo = #{apptno,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectOrder" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List"></include>
+    from apptinfo
+  </select>
+
+  <select id="selectCreateTime" parameterType="java.lang.Integer">
+    select  createTime
+    from apptinfo
+  </select>
+
+</mapper>

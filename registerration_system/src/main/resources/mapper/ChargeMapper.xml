@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sesame.mapper.ChargeMapper">
+	<resultMap type="com.sesame.pojo.Charge" id="ChargeMap">
+		<id column="chargeNo" property="chargeNo"/>
+ 	     <result column="grade" property="grade"/>
+ 	     <result column="fee" property="fee"/>
+ 	     <result column="priceTypeNo" property="priceTypeNo"/>
+	
+  	
+    <association property="doctor" javaType="com.sesame.pojo.Doctor">
+    	 <id column="dno" jdbcType="INTEGER" property="dno" />
+	    <result column="dname" jdbcType="VARCHAR" property="dname" />
+	    <result column="sex" jdbcType="VARCHAR" property="sex" />
+	    <result column="roomNo" jdbcType="INTEGER" property="roomno" />
+	    <result column="rank" jdbcType="VARCHAR" property="rank" />
+	    <result column="grade" jdbcType="VARCHAR" property="grade" />
+	    <result column="describe" jdbcType="VARCHAR" property="describe" />
+	    <result column="picture" jdbcType="VARCHAR" property="picture" />
+ 	     	         
+    </association>
+     <association property="chargeType" javaType="com.sesame.pojo.ChargeType">
+ 	     	<id column="priceTypeNo" property="priceTypeNo"/>
+ 	    	<result column="priceTypeName" property="priceTypeName"/>
+ 	 </association>
+		<association property="room" javaType="com.sesame.pojo.Room">
+			<id column="roomNo" jdbcType="INTEGER" property="roomno" />
+			<result column="roomName" jdbcType="VARCHAR" property="roomname" />
+			<result column="RoomDescribe" jdbcType="VARCHAR" property="roomdescribe" />
+			<result column="sectionNo" jdbcType="INTEGER" property="sectionno" />
+		</association>
+  </resultMap>
+  
+  
+  <!--  
+	//通过医生id和等级显示医生信息和挂号费用
+	public Charge queryDoctorRegisterInfo(Doctor doctor) ;	
+	-->	
+	
+	<select id="queryDoctorRegisterInfo" resultMap="ChargeMap">
+		select d.dno, d.dname, d.sex, d.roomNo,r.roomName, d.rank, d.grade, d.describe, d.picture, c.fee , ct.priceTypeName
+		from doctor d
+		RIGHT join charge c  on d.grade = c.grade
+		RIGHT join  room  r on r.roomNo=d.roomNo
+		RIGHT join  charge_type  ct on c.priceTypeNo=ct.priceTypeNo
+	    where d.dno=#{dno,jdbcType=INTEGER} and c.priceTypeNo=1
+	</select>
+		
+	<!-- 
+	//通过医生id和等级显示医生信息和问诊费用
+	public Charge queryDoctorInquiryInfo(Doctor doctor) ; -->
+	<select id="queryDoctorInquiryInfo" resultMap="ChargeMap">
+		select d.dno, d.dname, d.sex, d.roomNo,r.roomName, d.rank, d.grade, d.describe, d.picture, c.fee , ct.priceTypeName
+		from doctor d
+		 RIGHT join charge c  on d.grade = c.grade
+		 RIGHT join  room  r on r.roomNo=d.roomNo
+		 RIGHT join  charge_type  ct on c.priceTypeNo=ct.priceTypeNo
+	     where d.dno=#{dno,jdbcType=INTEGER} and c.priceTypeNo=2
+	</select>
+
+</mapper>

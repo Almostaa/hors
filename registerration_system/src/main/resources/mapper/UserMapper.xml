@@ -3,91 +3,101 @@
 
 <mapper namespace="com.sesame.mapper.UserMapper">
 
-    <!-- 封装结果集 -->
+	<!-- 封装结果集 -->
 	<resultMap id="UserResultMap" type="com.sesame.pojo.User" >
-	    <id column="userNo" property="userNo" jdbcType="INTEGER" />
-	    <result column="userName" property="userName" jdbcType="VARCHAR" />
-	    <result column="passWord" property="passWord" jdbcType="VARCHAR" />
-	    <result column="sex" property="sex" jdbcType="VARCHAR" />
-	    <result column="idCardNumber" property="idCardNumber" jdbcType="VARCHAR" />
-	    <result column="socialCard" property="socialCard" jdbcType="VARCHAR" />
-	    <result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR" />
-	 </resultMap>
-	 
-	 <!-- sql通用 -->
-	 <sql id="User_List">
+		<id column="userNo" property="userNo" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="passWord" property="passWord" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="idCardNumber" property="idCardNumber" jdbcType="VARCHAR" />
+		<result column="socialCard" property="socialCard" jdbcType="VARCHAR" />
+		<result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- sql通用 -->
+	<sql id="User_List">
 	 	userNo ,userName , passWord ,sex ,idCardNumber ,socialCard ,phoneNumber
 	 </sql>
-	 
-	 <!-- 
-		 /*
-		 * 注册用户
-		 */
-			public Integer register(User user);
-	  -->
-	  <insert id="register" parameterType="com.sesame.pojo.User">	  
-	  		insert into user(phoneNumber,passWord)
-	  		value (#{phoneNumber,jdbcType=VARCHAR},#{passWord,jdbcType=VARCHAR})
+
+	<!--
+        /*
+        * 注册用户
+        */
+           public Integer register(User user);
+     -->
+	<insert id="register" parameterType="com.sesame.pojo.User">
+	  		insert into `user` (phoneNumber,passWord)
+	  		values (#{phoneNumber,jdbcType=VARCHAR},#{passWord,jdbcType=VARCHAR})
 	  </insert>
-	  
-	  <!-- 
-		  	/**count(*)=1，数据库有信息，=0用户或密码错误*/
-			public User loginUser(User user);
-	   -->
-	   <select id="loginUser" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
-	   
-	   		select count(*),<include refid="User_List"></include>
-	   		from user
-	   		<where>
-	   			<if test="phoneNumber!=null">
-	   				phoneNumber = #{phoneNumber}
-	   			</if>
-	   			
-	   			<if test="passWord !=null">
-	   				and passWord = #{passWord}
-	   			</if>
-	   		</where>
+
+	<!--
+		/*查询用户是否存在*/
+		User selectuser(String name);
+	-->
+	<select id="selectuser" resultMap="UserResultMap">
+		select <include refid="User_List"></include>
+		from `user`  where phoneNumber = #{phoneNumber}
+	</select>
+
+
+	<!--
+            /**count(*)=1，数据库有信息，=0用户或密码错误*/
+          public User loginUser(User user);
+     -->
+	<select id="loginUser" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
+
+		select count(*),<include refid="User_List"></include>
+		from `user`
+		<where>
+			<if test="phoneNumber!=null">
+				phoneNumber = #{phoneNumber}
+			</if>
+
+			<if test="passWord !=null">
+				and passWord = #{passWord}
+			</if>
+		</where>
+	</select>
+
+
+	<!--
+            /**通过id查询用户信息用于回显*/
+         public User queryUserInfo( Integer userNo);
+    -->
+
+	<select id="queryUserInfo" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
+	   		select userNo ,userName ,sex ,idCardNumber ,socialCard ,phoneNumber
+	   		from `user`
+	   		where userNo = #{userNo,jdbcType=INTEGER}
 	   </select>
-	   
-	   
-	   <!--  
-	   		/**通过id查询用户信息用于回显*/
-			public User queryUserInfo( Integer userNo);
-	   -->
-	   
-	   <select id="queryUserInfo" parameterType="com.sesame.pojo.User" resultMap="UserResultMap">
-	   		select <include refid="User_List" ></include>
-	   		from user 
-	   		where userNo=#{userNo}
-	   </select>
-	   <!-- 
-	   		/**完善用户信息*/
-			public Integer improveUserInfo(User user);
-	   -->
-	   <update id="improveUserInfo" >	   
-	   		update user 
-	  		<set >
-		      <if test="userName != null" >
-		        userName = #{userName,jdbcType=VARCHAR},
-		      </if>
-		      <if test="passWord != null" >
-		        passWord = #{passWord,jdbcType=VARCHAR},
-		      </if>
-		      <if test="sex != null" >
-		        sex = #{sex,jdbcType=VARCHAR},
-		      </if>
-		      <if test="idCardNumber != null" >
-		        idCardNumber = #{idCardNumber,jdbcType=VARCHAR},
-		      </if>
-		      <if test="socialCard != null" >
-		        socialCard = #{socialCard,jdbcType=VARCHAR},
-		      </if>
-		      <if test="phoneNumber != null" >
-		        phoneNumber = #{phoneNumber,jdbcType=VARCHAR},
-		      </if>
-		    </set>
-		    where userNo = #{userNo,jdbcType=INTEGER}	  		
-	  </update>
+	<!--
+            /**完善用户信息*/
+         public Integer improveUserInfo(User user);
+    -->
+	<update id="improveUserInfo" >
+		update `user`
+		<set >
+			<if test="userName != null" >
+				userName = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="passWord != null" >
+				passWord = #{passWord,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null" >
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="idCardNumber != null" >
+				idCardNumber = #{idCardNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="socialCard != null" >
+				socialCard = #{socialCard,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNumber != null" >
+				phoneNumber = #{phoneNumber,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where phoneNumber = #{phoneNumber,jdbcType=VARCHAR}
+	</update>
 
 
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.IMMapper">
+	
+	<!--  
+		//存储一条用户IM有关的信息
+		Integer insertUserIm(UserIM userIm);
+	-->
+	<insert id="insertUserIm" parameterType="com.sesame.pojo.UserIM">
+		insert into `user_im_info` (accid,token,name)
+	  	values (#{accid,jdbcType=VARCHAR},#{token,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR})	  
+	</insert>
+	
+	<!--  
+		//查询用户token信息	
+		UserIM selectUserToken(String phoneNumber);
+	-->
+	<select id="selectUserToken" resultType="com.sesame.pojo.UserIM">
+		SELECT accid,token from user_im_info WHERE accid=#{accid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 
+		//存储一条医生IM有关的信息
+	Integer insertDoctorIm(DoctorIM doctorIm);
+	 -->
+	 
+	 <insert id="insertDoctorIm" parameterType="com.sesame.pojo.DoctorIM">
+		insert into `doctor_im_info` (accid,token)
+	  	values (#{accid,jdbcType=VARCHAR},#{token,jdbcType=VARCHAR})
+	</insert>
+
+	<!--  
+		//查询医生的accid,token
+	DoctorIM selectDoctorImInfo(@Param("accid") String accid);
+	-->
+	
+	<select id="selectDoctorImInfo" resultType="com.sesame.pojo.DoctorIM">
+		SELECT accid,token FROM `doctor_im_info` WHERE accid=#{accid,jdbcType=VARCHAR}
+	</select>
+</mapper>

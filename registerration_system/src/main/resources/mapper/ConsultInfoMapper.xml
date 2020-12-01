@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesame.mapper.ConsultInfoMapper">
+    <resultMap id="BaseResultMap" type="com.sesame.pojo.ConsultInfo">
+        <id column="consultNo" jdbcType="INTEGER" property="consultNo" />
+        <result column="usno" jdbcType="INTEGER" property="usno" />
+        <result column="dno" jdbcType="INTEGER" property="dno" />
+        <result column="dName" jdbcType="VARCHAR" property="dName" />
+        <result column="userName" jdbcType="VARCHAR" property="userName" />
+        <result column="startTime" jdbcType="VARCHAR" property="startTime" />
+        <result column="endTime" jdbcType="VARCHAR" property="endTime" />
+        <result column="price" jdbcType="DOUBLE" property="price" />
+        <result column="state" jdbcType="VARCHAR" property="state" />
+    </resultMap>
+    <select id="getConsultInfoListByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+        SELECT c.consultNo,d.dname,u.userName,c.price,c.startTime,c.endTime,c.state,r.roomName
+        FROM doctor d
+        LEFT JOIN room r on d.roomNo=r.roomNo
+        LEFT JOIN `consultinfo` c on c.dno=d.dno
+        LEFT JOIN `user` u on u.userNo=c.usno
+        WHERE c.usno=#{usno,jdbcType=INTEGER}
+
+    </select>
+
+    <!--
+   /*
+    * @author sfda
+    * 确认订单后插入数据
+    * */
+    Integer insertOrder(ConsultInfo consultInfo);
+-->
+
+    <insert id="insertOrder" useGeneratedKeys="true" keyProperty="consultNo" parameterType="com.sesame.pojo.ConsultInfo">
+    insert into consultinfo (usno, dno,
+      state,price)
+    values (#{usno,jdbcType=INTEGER}, #{dno,jdbcType=INTEGER},
+      0, #{price,jdbcType=DOUBLE}
+      )
+  </insert>
+
+
+    <!--
+    /*
+     * @author sfda
+     * 支付成功后更新状态码
+     * */
+  -->
+    <update id="updateOrder" parameterType="com.sesame.pojo.ConsultInfo">
+    update consultinfo
+    set
+      state = 1,startTime = now()
+    where consultNo = #{consultNo,jdbcType=INTEGER}
+  </update>
+
+    <!--
+   /*
+    * @author sfda
+    * 退出咨询页面更新结束时间
+    * */
+ -->
+    <update id="updateDate" parameterType="com.sesame.pojo.ConsultInfo">
+    update consultinfo
+    set
+      endTime =now()
+    where consultNo = #{consultNo,jdbcType=INTEGER}
+  </update>
+
+
+    <!--
+     /*
+     * @author sfda
+     * 根据门诊编号查询支付状态码
+     *
+     */
+
+    ConsultInfo getConsultInfoState(Integer id);
+    -->
+    <select id="getConsultInfoState" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select state,dno FROM consultinfo where consultNo=#{consultNo,jdbcType = INTEGER}
+    </select>
+
+</mapper>

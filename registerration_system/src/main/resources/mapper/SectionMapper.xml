@@ -6,7 +6,29 @@
   <resultMap id="BaseResultMap" type="com.sesame.pojo.Section">
     <id column="sectionNo" jdbcType="INTEGER" property="sectionno" />
     <result column="sectionName" jdbcType="VARCHAR" property="sectionname" />
+
+    <association property="room" javaType="com.sesame.pojo.Room">
+      <id column="roomNo" jdbcType="INTEGER" property="roomno" />
+      <result column="roomName" jdbcType="VARCHAR" property="roomname" />
+      <result column="RoomDescribe" jdbcType="VARCHAR" property="roomdescribe" />
+      <result column="sectionNo" jdbcType="INTEGER" property="sectionno" />
+    </association>
+
+    <association property="doctor" javaType="com.sesame.pojo.Doctor">
+      <id column="dno" jdbcType="INTEGER" property="dno" />
+      <result column="dname" jdbcType="VARCHAR" property="dname" />
+      <result column="sex" jdbcType="VARCHAR" property="sex" />
+      <result column="roomNo" jdbcType="INTEGER" property="roomno" />
+      <result column="rank" jdbcType="VARCHAR" property="rank" />
+      <result column="grade" jdbcType="VARCHAR" property="grade" />
+      <result column="describe" jdbcType="VARCHAR" property="describe" />
+      <result column="picture" jdbcType="VARCHAR" property="picture" />
+
+    </association>
+
   </resultMap>
+
+
 
   <sql id="Base_Column_List">
     sectionNo, sectionName
@@ -21,4 +43,26 @@
     from section
   </select>
 
+  <!--
+    /*根据大类id连表查询大类下的医生*/
+    List<Doctor> selectDoctor(Integer sectionno);
+  -->
+  <select id="selectDoctor" resultMap="BaseResultMap">
+    select d.dno,d.dname ,d.sex,d.roomNo,d.picture,d.describe,d.grade,d.rank
+    from doctor d
+    JOIN room r ON d.roomNo = r.roomNo
+    JOIN section s ON s.sectionNo = r.sectionNo
+    where s.sectionNo = #{sectionNo,jdbcType=INTEGER}
+  </select>
+
+  <!--
+    /*根据大类id连表查询大类下的医生*/
+    List<Doctor> selectDoctor(Integer sectionno);
+  -->
+  <select id="selectDoctorList" resultMap="BaseResultMap">
+    select d.dno,d.dname ,d.sex,d.roomNo,d.picture,d.describe,d.grade,d.rank
+    from doctor d
+    JOIN room r ON d.roomNo = r.roomNo
+    JOIN section s ON s.sectionNo = r.sectionNo
+  </select>
 </mapper>
