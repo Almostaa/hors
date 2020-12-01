@@ -150,8 +150,8 @@
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.5</version>
 		</dependency>
-	    
-		
+
+
 	</dependencies>
 
 	<build>
@@ -160,11 +160,11 @@
               <resource>
                   <directory>src/main/resources</directory>
                   <includes>
-                      <include>**/*.properties</include>
-                      <include>**/*.xml</include>
-			  <!-- 新加入的两行代码 -->
-			<include>**/*.jpg</include>
-			<include>**/*.png</include>
+						<include>**/*.properties</include>
+						<include>**/*.xml</include>
+						<!-- 新加入的两行代码 -->
+						<include>**/*.jpg</include>
+						<include>**/*.png</include>
                  </includes>
                   <filtering>true</filtering>
              </resource>
