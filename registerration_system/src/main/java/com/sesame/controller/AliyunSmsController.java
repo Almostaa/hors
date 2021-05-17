@@ -40,8 +40,8 @@ public class AliyunSmsController {
     static final String domain = "dysmsapi.aliyuncs.com";
 
     // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAI4G5MyR5iohbnyREarQjD";
-    static final String accessKeySecret = "HM7FvSTvbJkzyKsvSUT1odNKG9HMcl"; // TODO 改这里
+    static final String accessKeyId = "";
+    static final String accessKeySecret = ""; // TODO 改这里
 
     public static SendSmsResponse sendSms(String telephone, String code) throws ClientException, com.aliyuncs.exceptions.ClientException {
 
