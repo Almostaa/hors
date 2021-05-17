@@ -903,9 +903,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (16, '凤飞飞', 'aaaa123', '女', '666666666666666666', '666666666666666666', '18527309692');
-INSERT INTO `user` VALUES (19, NULL, 'z12345', NULL, NULL, NULL, '13469860227');
-INSERT INTO `user` VALUES (20, '凤飞飞', 'z12345', '女', '422826199805083214', '422826199805083214', '18589932455');
 
 -- ----------------------------
 -- Table structure for user_im_info
@@ -923,11 +920,6 @@ CREATE TABLE `user_im_info`  (
 -- ----------------------------
 -- Records of user_im_info
 -- ----------------------------
-INSERT INTO `user_im_info` VALUES (1, NULL, '1a', '90f3a6df19df9152f6cef954107aa59f', '1a');
-INSERT INTO `user_im_info` VALUES (2, NULL, '1acc', 'ec4c35f1cf5c944ccd35cb6dbd6f829d', '1acc');
-INSERT INTO `user_im_info` VALUES (3, NULL, '18527309692', '15cf81141f769f0ea43eb255608f888c', '18527309692');
-INSERT INTO `user_im_info` VALUES (4, NULL, '13469860227', 'c5e53a33cb6f9fce518a2b44ee0b52f3', '13469860227');
-INSERT INTO `user_im_info` VALUES (5, NULL, '18589932455', 'ad5bb6e62142862618b0a594ab02caa3', '18589932455');
 
 -- ----------------------------
 -- Procedure structure for conv_weekday
